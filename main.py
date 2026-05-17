@@ -290,6 +290,102 @@ async def create_xml_document(
         logger.error(f"Error creating XML file: {e}", exc_info=True)
         raise ToolError(f"Error creating XML file: {e}")
 
+# === Read Tools ===
+from read_tools import (
+    read_docx, get_docx_info, get_docx_paragraphs, get_docx_tables,
+    read_xlsx, get_xlsx_info, get_xlsx_sheets,
+    read_pptx, get_pptx_info, get_pptx_slides,
+)
+
+
+@mcp.tool(name="read_document", description="Extract all text from an existing document (DOCX, XLSX, or PPTX)", tags=["read"])
+async def tool_read_document(
+    file_path: Annotated[str, Field(description="Absolute path to the document file (.docx, .xlsx, or .pptx)")],
+) -> str:
+    """Read and extract text from an existing Office document."""
+    path = file_path.lower()
+    try:
+        if path.endswith(".docx"):
+            return read_docx(file_path)
+        elif path.endswith(".xlsx"):
+            return read_xlsx(file_path)
+        elif path.endswith(".pptx"):
+            return read_pptx(file_path)
+        else:
+            raise ToolError(f"Unsupported file format. Supported: .docx, .xlsx, .pptx")
+    except ToolError:
+        raise
+    except Exception as e:
+        raise ToolError(f"Error reading document: {e}")
+
+
+@mcp.tool(name="get_document_info", description="Get metadata and statistics from an existing document", tags=["read"])
+async def tool_get_document_info(
+    file_path: Annotated[str, Field(description="Absolute path to the document file (.docx, .xlsx, or .pptx)")],
+) -> dict:
+    """Get document metadata: author, dates, page/slide/sheet count, etc."""
+    path = file_path.lower()
+    try:
+        if path.endswith(".docx"):
+            return get_docx_info(file_path)
+        elif path.endswith(".xlsx"):
+            return get_xlsx_info(file_path)
+        elif path.endswith(".pptx"):
+            return get_pptx_info(file_path)
+        else:
+            raise ToolError(f"Unsupported file format. Supported: .docx, .xlsx, .pptx")
+    except ToolError:
+        raise
+    except Exception as e:
+        raise ToolError(f"Error getting document info: {e}")
+
+
+@mcp.tool(name="get_docx_paragraphs", description="List all paragraphs from a DOCX file with index and style", tags=["read", "docx"])
+async def tool_get_docx_paragraphs(
+    file_path: Annotated[str, Field(description="Absolute path to the .docx file")],
+) -> list[dict]:
+    """Get paragraphs with index, style name, and text content."""
+    try:
+        return get_docx_paragraphs(file_path)
+    except Exception as e:
+        raise ToolError(f"Error reading paragraphs: {e}")
+
+
+@mcp.tool(name="get_docx_tables", description="Extract tables from a DOCX file with content", tags=["read", "docx"])
+async def tool_get_docx_tables(
+    file_path: Annotated[str, Field(description="Absolute path to the .docx file")],
+) -> list[dict]:
+    """Get tables with row/column count and cell data."""
+    try:
+        return get_docx_tables(file_path)
+    except Exception as e:
+        raise ToolError(f"Error reading tables: {e}")
+
+
+@mcp.tool(name="get_xlsx_sheets", description="Get sheet content from an XLSX file", tags=["read", "xlsx"])
+async def tool_get_xlsx_sheets(
+    file_path: Annotated[str, Field(description="Absolute path to the .xlsx file")],
+    sheet_name: Annotated[Optional[str], Field(description="Specific sheet name (omit for all sheets)", default=None)] = None,
+    max_rows: Annotated[int, Field(description="Maximum rows to return per sheet", default=100)] = 100,
+) -> list[dict]:
+    """Get sheet data as rows. Optionally filter by sheet name."""
+    try:
+        return get_xlsx_sheets(file_path, sheet_name=sheet_name, max_rows=max_rows)
+    except Exception as e:
+        raise ToolError(f"Error reading sheets: {e}")
+
+
+@mcp.tool(name="get_pptx_slides", description="List all slides from a PPTX file with content", tags=["read", "pptx"])
+async def tool_get_pptx_slides(
+    file_path: Annotated[str, Field(description="Absolute path to the .pptx file")],
+) -> list[dict]:
+    """Get slides with index, layout, shape count, and text content."""
+    try:
+        return get_pptx_slides(file_path)
+    except Exception as e:
+        raise ToolError(f"Error reading slides: {e}")
+
+
 if __name__ == "__main__":
     mcp.run(
         transport="streamable-http",
