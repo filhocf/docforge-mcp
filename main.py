@@ -386,6 +386,34 @@ async def tool_get_pptx_slides(
         raise ToolError(f"Error reading slides: {e}")
 
 
+# === Conditional Template Tools ===
+from docx_tools.conditional_templates import render_docx_template, render_pptx_template
+
+
+@mcp.tool(name="render_docx_template", description="Render a DOCX template with variables, conditionals, and loops", tags=["template", "docx"])
+async def tool_render_docx_template(
+    file_path: Annotated[str, Field(description="Path to DOCX template file")],
+    context: Annotated[Dict, Field(description="Template variables: {'name': 'value', 'items': [...], 'show_section': true}")],
+    output_path: Annotated[Optional[str], Field(description="Output path", default=None)] = None,
+) -> str:
+    try:
+        return render_docx_template(file_path, context, output_path)
+    except Exception as e:
+        raise ToolError(f"Error rendering template: {e}")
+
+
+@mcp.tool(name="render_pptx_template", description="Render a PPTX template with variables, conditionals, and loops", tags=["template", "pptx"])
+async def tool_render_pptx_template(
+    file_path: Annotated[str, Field(description="Path to PPTX template file")],
+    context: Annotated[Dict, Field(description="Template variables")],
+    output_path: Annotated[Optional[str], Field(description="Output path", default=None)] = None,
+) -> str:
+    try:
+        return render_pptx_template(file_path, context, output_path)
+    except Exception as e:
+        raise ToolError(f"Error rendering template: {e}")
+
+
 # === Merge Tools ===
 from merge_tools import merge_docx, merge_pptx
 
