@@ -386,6 +386,54 @@ async def tool_get_pptx_slides(
         raise ToolError(f"Error reading slides: {e}")
 
 
+# === Advanced PPTX Tools ===
+from pptx_tools.advanced import open_pptx_and_edit, add_shape_to_slide, duplicate_slide, apply_slide_template
+
+
+@mcp.tool(name="apply_pptx_template", description="Replace placeholder text in a PPTX slide", tags=["edit", "pptx", "advanced"])
+async def tool_apply_pptx_template(
+    file_path: Annotated[str, Field(description="Absolute path to the .pptx file")],
+    slide_index: Annotated[int, Field(description="Slide index (0-based)")],
+    replacements: Annotated[Dict[str, str], Field(description="Map of placeholder to value, e.g. {'{{title}}': 'Real Title'}")],
+    output_path: Annotated[Optional[str], Field(description="Save to different path", default=None)] = None,
+) -> str:
+    try:
+        return apply_slide_template(file_path, slide_index, replacements, output_path)
+    except Exception as e:
+        raise ToolError(f"Error applying template: {e}")
+
+
+@mcp.tool(name="add_shape_to_slide", description="Add a shape (rectangle, oval, triangle) to a PPTX slide", tags=["edit", "pptx", "advanced"])
+async def tool_add_shape(
+    file_path: Annotated[str, Field(description="Absolute path to the .pptx file")],
+    slide_index: Annotated[int, Field(description="Slide index (0-based)")],
+    shape_type: Annotated[str, Field(description="Shape: rectangle, oval, rounded_rectangle, triangle", default="rectangle")] = "rectangle",
+    left_inches: Annotated[float, Field(description="Left position in inches", default=1.0)] = 1.0,
+    top_inches: Annotated[float, Field(description="Top position in inches", default=1.0)] = 1.0,
+    width_inches: Annotated[float, Field(description="Width in inches", default=3.0)] = 3.0,
+    height_inches: Annotated[float, Field(description="Height in inches", default=2.0)] = 2.0,
+    text: Annotated[str, Field(description="Text inside shape", default="")] = "",
+    fill_color: Annotated[Optional[str], Field(description="Fill color hex (e.g. '#FF0000')", default=None)] = None,
+    output_path: Annotated[Optional[str], Field(description="Save to different path", default=None)] = None,
+) -> str:
+    try:
+        return add_shape_to_slide(file_path, slide_index, shape_type, left_inches, top_inches, width_inches, height_inches, text, fill_color, output_path)
+    except Exception as e:
+        raise ToolError(f"Error adding shape: {e}")
+
+
+@mcp.tool(name="duplicate_pptx_slide", description="Duplicate a slide in a PPTX file", tags=["edit", "pptx", "advanced"])
+async def tool_duplicate_slide(
+    file_path: Annotated[str, Field(description="Absolute path to the .pptx file")],
+    slide_index: Annotated[int, Field(description="Slide index to duplicate (0-based)")],
+    output_path: Annotated[Optional[str], Field(description="Save to different path", default=None)] = None,
+) -> str:
+    try:
+        return duplicate_slide(file_path, slide_index, output_path)
+    except Exception as e:
+        raise ToolError(f"Error duplicating slide: {e}")
+
+
 # === Excel Chart Tools ===
 from xlsx_tools.charts import create_excel_chart
 
