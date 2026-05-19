@@ -11,13 +11,13 @@ from pptx.util import Inches, Pt
 # Slide Layout Indices (PowerPoint default template)
 # =============================================================================
 
-TITLE_LAYOUT = 0           # Title Slide
-CONTENT_LAYOUT = 1         # Title and Content
-SECTION_LAYOUT = 2         # Section Header
-TWO_COLUMN_LAYOUT = 3      # Two Content (no subheaders)
-TWO_COLUMN_TEXT_LAYOUT = 4 # Comparison (with subheaders)
-TITLE_ONLY_LAYOUT = 5      # Title Only
-BLANK_LAYOUT = 6           # Blank
+TITLE_LAYOUT = 0  # Title Slide
+CONTENT_LAYOUT = 1  # Title and Content
+SECTION_LAYOUT = 2  # Section Header
+TWO_COLUMN_LAYOUT = 3  # Two Content (no subheaders)
+TWO_COLUMN_TEXT_LAYOUT = 4  # Comparison (with subheaders)
+TITLE_ONLY_LAYOUT = 5  # Title Only
+BLANK_LAYOUT = 6  # Blank
 
 
 # =============================================================================
@@ -49,4 +49,3 @@ MARGIN_TOP = Inches(0.3)
 MARGIN_BOTTOM = Inches(0.5)
 TITLE_HEIGHT = Inches(0.8)
 CONTENT_TOP = Inches(1.3)
-

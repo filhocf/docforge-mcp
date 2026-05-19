@@ -15,7 +15,7 @@ def open_pptx_and_edit(file_path: str, slide_index: int, placeholder_map: dict[s
     """
     prs = Presentation(file_path)
     if slide_index < 0 or slide_index >= len(prs.slides):
-        raise ValueError(f"Slide index {slide_index} out of range (0-{len(prs.slides)-1})")
+        raise ValueError(f"Slide index {slide_index} out of range (0-{len(prs.slides) - 1})")
 
     slide = prs.slides[slide_index]
     replacements = 0
@@ -33,11 +33,18 @@ def open_pptx_and_edit(file_path: str, slide_index: int, placeholder_map: dict[s
     return f"Replaced {replacements} placeholder(s) in slide {slide_index}. Saved to {save_path}"
 
 
-def add_shape_to_slide(file_path: str, slide_index: int, shape_type: str = "rectangle",
-                       left_inches: float = 1.0, top_inches: float = 1.0,
-                       width_inches: float = 3.0, height_inches: float = 2.0,
-                       text: str = "", fill_color: str | None = None,
-                       output_path: str | None = None) -> str:
+def add_shape_to_slide(
+    file_path: str,
+    slide_index: int,
+    shape_type: str = "rectangle",
+    left_inches: float = 1.0,
+    top_inches: float = 1.0,
+    width_inches: float = 3.0,
+    height_inches: float = 2.0,
+    text: str = "",
+    fill_color: str | None = None,
+    output_path: str | None = None,
+) -> str:
     """Add a shape to a slide. shape_type: rectangle, oval, rounded_rectangle, triangle."""
     shape_map = {
         "rectangle": MSO_SHAPE.RECTANGLE,
@@ -55,8 +62,10 @@ def add_shape_to_slide(file_path: str, slide_index: int, shape_type: str = "rect
     slide = prs.slides[slide_index]
     shape = slide.shapes.add_shape(
         shape_map[shape_type],
-        Inches(left_inches), Inches(top_inches),
-        Inches(width_inches), Inches(height_inches),
+        Inches(left_inches),
+        Inches(top_inches),
+        Inches(width_inches),
+        Inches(height_inches),
     )
 
     if text:

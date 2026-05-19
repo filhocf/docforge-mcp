@@ -26,11 +26,13 @@ def get_xlsx_info(file_path: str) -> dict:
     sheets_info = []
     for sheet_name in wb.sheetnames:
         ws = wb[sheet_name]
-        sheets_info.append({
-            "name": sheet_name,
-            "rows": ws.max_row or 0,
-            "columns": ws.max_column or 0,
-        })
+        sheets_info.append(
+            {
+                "name": sheet_name,
+                "rows": ws.max_row or 0,
+                "columns": ws.max_column or 0,
+            }
+        )
     wb.close()
 
     return {
@@ -55,11 +57,13 @@ def get_xlsx_sheets(file_path: str, sheet_name: str | None = None, max_rows: int
             if i >= max_rows:
                 break
             rows.append([str(c) if c is not None else "" for c in row])
-        result.append({
-            "sheet": name,
-            "rows_returned": len(rows),
-            "total_rows": ws.max_row or 0,
-            "data": rows,
-        })
+        result.append(
+            {
+                "sheet": name,
+                "rows_returned": len(rows),
+                "total_rows": ws.max_row or 0,
+                "data": rows,
+            }
+        )
     wb.close()
     return result

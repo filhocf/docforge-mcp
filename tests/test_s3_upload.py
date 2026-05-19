@@ -48,6 +48,7 @@ def _build_env(**overrides):
 def _get_fresh_config(env: dict):
     """Return a fresh Config from *env*, bypassing the singleton cache."""
     import config as cfg_mod
+
     cfg_mod._CONFIG = None
     with patch.dict(os.environ, env, clear=True):
         return cfg_mod.get_config()
@@ -56,6 +57,7 @@ def _get_fresh_config(env: dict):
 # ---------------------------------------------------------------------------
 # S3Settings validation tests
 # ---------------------------------------------------------------------------
+
 
 class TestS3SettingsValidation:
     """Test S3Settings Pydantic model validation rules."""
@@ -175,6 +177,7 @@ class TestS3SettingsValidation:
 # S3 client creation tests
 # ---------------------------------------------------------------------------
 
+
 class TestS3ClientCreation:
     """Test _create_s3_client builds the boto3 client correctly."""
 
@@ -191,10 +194,11 @@ class TestS3ClientCreation:
         mock_client = MagicMock()
         with patch("boto3.client", return_value=mock_client) as patched:
             from docforge.upload.backends.s3 import _create_s3_client
+
             result = _create_s3_client(cfg.storage.s3)
 
             patched.assert_called_once_with(
-                's3',
+                "s3",
                 region_name="us-west-2",
                 aws_access_key_id="AKID",
                 aws_secret_access_key="secret",
@@ -210,9 +214,10 @@ class TestS3ClientCreation:
         mock_client = MagicMock()
         with patch("boto3.client", return_value=mock_client) as patched:
             from docforge.upload.backends.s3 import _create_s3_client
+
             result = _create_s3_client(cfg.storage.s3)
 
-            patched.assert_called_once_with('s3')
+            patched.assert_called_once_with("s3")
             assert result is mock_client
 
     def test_client_with_default_chain_and_region(self):
@@ -223,15 +228,17 @@ class TestS3ClientCreation:
         mock_client = MagicMock()
         with patch("boto3.client", return_value=mock_client) as patched:
             from docforge.upload.backends.s3 import _create_s3_client
+
             result = _create_s3_client(cfg.storage.s3)
 
-            patched.assert_called_once_with('s3', region_name="ap-southeast-1")
+            patched.assert_called_once_with("s3", region_name="ap-southeast-1")
             assert result is mock_client
 
 
 # ---------------------------------------------------------------------------
 # upload_to_s3 integration tests (mocked boto3)
 # ---------------------------------------------------------------------------
+
 
 class TestUploadToS3:
     """Test the upload_to_s3 function end-to-end with mocked boto3."""
@@ -258,8 +265,8 @@ class TestUploadToS3:
 
         mock_client.upload_fileobj.assert_called_once()
         mock_client.generate_presigned_url.assert_called_once_with(
-            'get_object',
-            Params={'Bucket': 'upload-bucket', 'Key': 'test.docx'},
+            "get_object",
+            Params={"Bucket": "upload-bucket", "Key": "test.docx"},
             ExpiresIn=3600,
         )
 

@@ -37,21 +37,22 @@ def sample_image(tmp_path):
     import zlib
 
     path = tmp_path / "test.png"
+
     # Minimal 1x1 red PNG
     def create_png():
-        signature = b'\x89PNG\r\n\x1a\n'
+        signature = b"\x89PNG\r\n\x1a\n"
         # IHDR
-        ihdr_data = struct.pack('>IIBBBBB', 1, 1, 8, 2, 0, 0, 0)
-        ihdr_crc = zlib.crc32(b'IHDR' + ihdr_data) & 0xffffffff
-        ihdr = struct.pack('>I', 13) + b'IHDR' + ihdr_data + struct.pack('>I', ihdr_crc)
+        ihdr_data = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
+        ihdr_crc = zlib.crc32(b"IHDR" + ihdr_data) & 0xFFFFFFFF
+        ihdr = struct.pack(">I", 13) + b"IHDR" + ihdr_data + struct.pack(">I", ihdr_crc)
         # IDAT
-        raw = b'\x00\xff\x00\x00'  # filter byte + RGB
+        raw = b"\x00\xff\x00\x00"  # filter byte + RGB
         compressed = zlib.compress(raw)
-        idat_crc = zlib.crc32(b'IDAT' + compressed) & 0xffffffff
-        idat = struct.pack('>I', len(compressed)) + b'IDAT' + compressed + struct.pack('>I', idat_crc)
+        idat_crc = zlib.crc32(b"IDAT" + compressed) & 0xFFFFFFFF
+        idat = struct.pack(">I", len(compressed)) + b"IDAT" + compressed + struct.pack(">I", idat_crc)
         # IEND
-        iend_crc = zlib.crc32(b'IEND') & 0xffffffff
-        iend = struct.pack('>I', 0) + b'IEND' + struct.pack('>I', iend_crc)
+        iend_crc = zlib.crc32(b"IEND") & 0xFFFFFFFF
+        iend = struct.pack(">I", 0) + b"IEND" + struct.pack(">I", iend_crc)
         return signature + ihdr + idat + iend
 
     path.write_bytes(create_png())

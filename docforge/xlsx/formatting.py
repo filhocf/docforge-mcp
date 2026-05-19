@@ -48,15 +48,9 @@ def apply_excel_formatting(file_path: str, sheet_name: str, rules: list[dict], o
             fill = PatternFill(start_color=color, end_color=color, fill_type="solid")
 
             if op == "between" and isinstance(value, list) and len(value) == 2:
-                ws.conditional_formatting.add(
-                    cell_range,
-                    CellIsRule(operator=op, formula=[str(value[0]), str(value[1])], fill=fill)
-                )
+                ws.conditional_formatting.add(cell_range, CellIsRule(operator=op, formula=[str(value[0]), str(value[1])], fill=fill))
             else:
-                ws.conditional_formatting.add(
-                    cell_range,
-                    CellIsRule(operator=op, formula=[str(value)], fill=fill)
-                )
+                ws.conditional_formatting.add(cell_range, CellIsRule(operator=op, formula=[str(value)], fill=fill))
             applied += 1
 
         elif rule_type == "color_scale":
@@ -66,18 +60,17 @@ def apply_excel_formatting(file_path: str, sheet_name: str, rules: list[dict], o
             ws.conditional_formatting.add(
                 cell_range,
                 ColorScaleRule(
-                    start_type="min", start_color=min_color,
-                    end_type="max", end_color=max_color,
-                )
+                    start_type="min",
+                    start_color=min_color,
+                    end_type="max",
+                    end_color=max_color,
+                ),
             )
             applied += 1
 
         elif rule_type == "data_bar":
             color = rule.get("color", "638EC6").lstrip("#")
-            ws.conditional_formatting.add(
-                cell_range,
-                DataBarRule(start_type="min", end_type="max", color=color)
-            )
+            ws.conditional_formatting.add(cell_range, DataBarRule(start_type="min", end_type="max", color=color))
             applied += 1
 
     save_path = output_path or file_path

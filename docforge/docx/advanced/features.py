@@ -89,7 +89,7 @@ def merge_table_cells(file_path: str, table_index: int, start_row: int, start_co
     doc = Document(file_path)
 
     if table_index < 0 or table_index >= len(doc.tables):
-        raise ValueError(f"Table index {table_index} out of range (0-{len(doc.tables)-1})")
+        raise ValueError(f"Table index {table_index} out of range (0-{len(doc.tables) - 1})")
 
     table = doc.tables[table_index]
     start_cell = table.cell(start_row, start_col)

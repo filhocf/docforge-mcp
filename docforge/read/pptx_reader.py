@@ -53,10 +53,12 @@ def get_pptx_slides(file_path: str) -> list[dict]:
                     text = paragraph.text.strip()
                     if text:
                         texts.append(text)
-        result.append({
-            "index": i,
-            "layout": slide.slide_layout.name if slide.slide_layout else "Unknown",
-            "shapes": len(slide.shapes),
-            "text_content": texts,
-        })
+        result.append(
+            {
+                "index": i,
+                "layout": slide.slide_layout.name if slide.slide_layout else "Unknown",
+                "shapes": len(slide.shapes),
+                "text_content": texts,
+            }
+        )
     return result

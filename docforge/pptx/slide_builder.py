@@ -193,21 +193,9 @@ class PowerpointPresentation(SlideHelperMixin, TextHelperMixin, TableHelperMixin
             logger.warning("No table data provided")
             return
 
-        header_color = parse_color(
-            data.get("header_color", "4172C4"),
-            TABLE_HEADER_FILL
-        )
+        header_color = parse_color(data.get("header_color", "4172C4"), TABLE_HEADER_FILL)
 
-        self._create_styled_table(
-            slide,
-            table_data,
-            left=left,
-            top=top,
-            width=width,
-            height=height,
-            header_color=header_color,
-            alternate_rows=data.get("alternate_rows", True)
-        )
+        self._create_styled_table(slide, table_data, left=left, top=top, width=width, height=height, header_color=header_color, alternate_rows=data.get("alternate_rows", True))
 
         self._add_speaker_notes(slide, data.get("speaker_notes"))
 
@@ -223,30 +211,22 @@ class PowerpointPresentation(SlideHelperMixin, TextHelperMixin, TableHelperMixin
         max_height = height - (Inches(0.6) if caption else 0)
 
         if image_url:
-            picture = self._add_image_from_url(
-                slide, image_url,
-                left=left,
-                top=top,
-                max_width=width,
-                max_height=max_height
-            )
+            picture = self._add_image_from_url(slide, image_url, left=left, top=top, max_width=width, max_height=max_height)
 
             if picture and caption:
                 self._add_text_box(
-                    slide, caption,
+                    slide,
+                    caption,
                     left=left,
                     top=picture.top + picture.height + Inches(0.1),
                     width=width,
                     height=Inches(0.5),
                     font_size=DEFAULT_CAPTION_FONT_SIZE,
                     italic=True,
-                    alignment=PP_ALIGN.CENTER
+                    alignment=PP_ALIGN.CENTER,
                 )
             elif not picture:
-                self._add_image_placeholder(
-                    slide, "Image could not be loaded",
-                    left, top + Inches(1), width
-                )
+                self._add_image_placeholder(slide, "Image could not be loaded", left, top + Inches(1), width)
 
         self._add_speaker_notes(slide, data.get("speaker_notes"))
 
@@ -303,7 +283,6 @@ class PowerpointPresentation(SlideHelperMixin, TextHelperMixin, TableHelperMixin
 
         self._add_speaker_notes(slide, data.get("speaker_notes"))
 
-
     def _build_chart_slide(self, data: Dict[str, Any]) -> None:
         """Build a slide with a chart using Title and Content layout."""
         title = data.get("slide_title", "")
@@ -312,11 +291,7 @@ class PowerpointPresentation(SlideHelperMixin, TextHelperMixin, TableHelperMixin
         # Chart
         chart_data = data.get("chart_data", {})
         if not chart_data:
-            self._add_text_box(
-                slide, "[No chart data provided]",
-                left, top, width, Inches(1),
-                alignment=PP_ALIGN.CENTER
-            )
+            self._add_text_box(slide, "[No chart data provided]", left, top, width, Inches(1), alignment=PP_ALIGN.CENTER)
             return
 
         try:
@@ -329,18 +304,13 @@ class PowerpointPresentation(SlideHelperMixin, TextHelperMixin, TableHelperMixin
                 width=width,
                 height=height,
                 has_legend=data.get("has_legend", True),
-                legend_position=data.get("legend_position", "right")
+                legend_position=data.get("legend_position", "right"),
             )
         except ChartDataError as e:
             logger.error(f"Chart error: {e}")
-            self._add_text_box(
-                slide, f"[Chart error: {e}]",
-                left, top, width, Inches(1),
-                alignment=PP_ALIGN.CENTER
-            )
+            self._add_text_box(slide, f"[Chart error: {e}]", left, top, width, Inches(1), alignment=PP_ALIGN.CENTER)
 
         self._add_speaker_notes(slide, data.get("speaker_notes"))
-
 
     def _build_quote_slide(self, data: Dict[str, Any]) -> None:
         """Build a quote/citation slide using Title and Content layout."""
@@ -395,4 +365,3 @@ class PowerpointPresentation(SlideHelperMixin, TextHelperMixin, TableHelperMixin
         except Exception as e:
             logger.error("Failed to save PowerPoint presentation: %s", e, exc_info=True)
             raise RuntimeError(f"Failed to save presentation: {e}") from e
-

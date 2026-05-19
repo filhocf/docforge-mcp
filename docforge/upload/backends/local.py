@@ -18,7 +18,7 @@ def upload_to_local_folder(file_object, file_name: str):
 
     try:
         file_object.seek(0)
-        with open(save_path, 'wb') as f:
+        with open(save_path, "wb") as f:
             f.write(file_object.read())
 
         logger.info("Saved file to %s", save_path)

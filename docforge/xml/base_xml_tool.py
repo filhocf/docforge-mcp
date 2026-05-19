@@ -20,11 +20,13 @@ logger = logging.getLogger(__name__)
 
 class XMLValidationError(Exception):
     """Raised when XML content is invalid or incomplete."""
+
     pass
 
 
 class XMLFileCreationError(Exception):
     """Raised when XML file creation or upload fails."""
+
     pass
 
 
@@ -84,7 +86,7 @@ def create_xml_file(xml_content: str, file_name: str | None = None) -> str:
 
     # Extract encoding from XML declaration if present, default to UTF-8
     encoding = "utf-8"
-    if xml_content.startswith('<?xml'):
+    if xml_content.startswith("<?xml"):
         match = re.search(r'encoding=["\']([^"\']+)["\']', xml_content)
         if match:
             encoding = match.group(1)
@@ -113,4 +115,3 @@ def create_xml_file(xml_content: str, file_name: str | None = None) -> str:
     except Exception as e:
         logger.error(f"Error creating XML file: {str(e)}", exc_info=True)
         raise XMLFileCreationError(f"Error creating XML file: {str(e)}") from e
-

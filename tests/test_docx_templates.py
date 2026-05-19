@@ -76,6 +76,7 @@ def get_paragraph_runs_info(paragraph) -> list:
 # Basic Placeholder Replacement Tests
 # =============================================================================
 
+
 class TestBasicPlaceholderReplacement:
     """Tests for basic placeholder replacement functionality."""
 
@@ -100,11 +101,7 @@ class TestBasicPlaceholderReplacement:
         para = doc.add_paragraph()
         para.add_run("Dear {{title}} {{name}}, welcome to {{company}}!")
 
-        context = {
-            "title": "Mr.",
-            "name": "Smith",
-            "company": "Acme Corp"
-        }
+        context = {"title": "Mr.", "name": "Smith", "company": "Acme Corp"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -176,6 +173,7 @@ class TestBasicPlaceholderReplacement:
 # Markdown Formatting Tests
 # =============================================================================
 
+
 class TestMarkdownFormatting:
     """Tests for markdown formatting support in placeholder values."""
 
@@ -241,15 +239,13 @@ class TestMarkdownFormatting:
         # Verify hyperlink exists - check the XML for hyperlink element
         doc2 = Document(path)
         para = doc2.paragraphs[0]
-        hyperlinks = para._p.findall('.//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}hyperlink')
+        hyperlinks = para._p.findall(".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}hyperlink")
         assert len(hyperlinks) > 0
 
     def test_mixed_formatting(self):
         """Test multiple formatting types in one value."""
         doc = create_test_document_with_placeholder("{{message}}")
-        context = {
-            "message": "This has **bold**, *italic*, `code`, and [link](https://test.com)"
-        }
+        context = {"message": "This has **bold**, *italic*, `code`, and [link](https://test.com)"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -325,6 +321,7 @@ class TestMarkdownFormatting:
 # Table Placeholder Tests
 # =============================================================================
 
+
 class TestTablePlaceholders:
     """Tests for placeholders in tables."""
 
@@ -332,7 +329,7 @@ class TestTablePlaceholders:
         """Test placeholder replacement in a table cell."""
         doc = Document()
         table = doc.add_table(rows=2, cols=2)
-        table.style = 'Table Grid'
+        table.style = "Table Grid"
 
         # Add headers
         table.cell(0, 0).text = "Name"
@@ -342,10 +339,7 @@ class TestTablePlaceholders:
         table.cell(1, 0).text = "{{field_name}}"
         table.cell(1, 1).text = "{{field_value}}"
 
-        context = {
-            "field_name": "Company",
-            "field_value": "Acme Corp"
-        }
+        context = {"field_name": "Company", "field_value": "Acme Corp"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -356,17 +350,14 @@ class TestTablePlaceholders:
         """Test markdown formatting in table cells."""
         doc = Document()
         table = doc.add_table(rows=2, cols=2)
-        table.style = 'Table Grid'
+        table.style = "Table Grid"
 
         table.cell(0, 0).text = "Feature"
         table.cell(0, 1).text = "Description"
         table.cell(1, 0).text = "{{feature}}"
         table.cell(1, 1).text = "{{description}}"
 
-        context = {
-            "feature": "**Bold Feature**",
-            "description": "This is *very* important"
-        }
+        context = {"feature": "**Bold Feature**", "description": "This is *very* important"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -377,7 +368,7 @@ class TestTablePlaceholders:
         """Test multiple placeholders across table cells."""
         doc = Document()
         table = doc.add_table(rows=3, cols=3)
-        table.style = 'Table Grid'
+        table.style = "Table Grid"
 
         # Fill with placeholders
         for i in range(3):
@@ -395,6 +386,7 @@ class TestTablePlaceholders:
 # =============================================================================
 # Header and Footer Tests
 # =============================================================================
+
 
 class TestHeaderFooterPlaceholders:
     """Tests for placeholders in headers and footers."""
@@ -432,10 +424,7 @@ class TestHeaderFooterPlaceholders:
         # Add body content
         doc.add_paragraph("Body content")
 
-        context = {
-            "year": "2026",
-            "company": "Test Company"
-        }
+        context = {"year": "2026", "company": "Test Company"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -464,6 +453,7 @@ class TestHeaderFooterPlaceholders:
 # =============================================================================
 # Unicode and Special Characters Tests
 # =============================================================================
+
 
 class TestUnicodeAndSpecialCharacters:
     """Tests for unicode and special character handling."""
@@ -526,6 +516,7 @@ class TestUnicodeAndSpecialCharacters:
 # Complex Document Tests
 # =============================================================================
 
+
 class TestComplexDocuments:
     """Tests for complex document scenarios."""
 
@@ -581,12 +572,12 @@ class TestComplexDocuments:
             "subject": "Partnership Proposal",
             "salutation": "Dear Mr. Novák,",
             "body": "I am writing to propose a **strategic partnership** between our companies. "
-                    "This opportunity would allow us to *leverage synergies* and create "
-                    "significant value for both parties.\n\n"
-                    "Please visit [our website](https://example.com) for more details.",
+            "This opportunity would allow us to *leverage synergies* and create "
+            "significant value for both parties.\n\n"
+            "Please visit [our website](https://example.com) for more details.",
             "closing": "Best regards,",
             "sender_name": "John Smith",
-            "sender_title": "Chief Executive Officer"
+            "sender_title": "Chief Executive Officer",
         }
 
         _replace_placeholders_in_document(doc, context)
@@ -622,7 +613,7 @@ class TestComplexDocuments:
 
         # Items table
         items_table = doc.add_table(rows=3, cols=3)
-        items_table.style = 'Table Grid'
+        items_table.style = "Table Grid"
 
         # Headers
         items_table.cell(0, 0).text = "Description"
@@ -681,17 +672,10 @@ class TestComplexDocuments:
 
         context = {
             "report_title": "Q4 2025 Analysis Report",
-            "executive_summary": "This report provides a **comprehensive analysis** of Q4 2025 performance. "
-                                 "Key metrics show *significant improvement* across all sectors.",
-            "key_findings": "1. Revenue increased by **15%**\n"
-                           "2. Customer satisfaction improved to *92%*\n"
-                           "3. New market entry was `successful`",
-            "recommendations": "Based on our analysis, we recommend:\n"
-                              "- Expand into [new markets](https://example.com/markets)\n"
-                              "- Invest in **R&D**\n"
-                              "- Focus on *customer retention*",
-            "conclusion": "The quarter exceeded expectations. Continued focus on innovation "
-                         "will drive future growth."
+            "executive_summary": "This report provides a **comprehensive analysis** of Q4 2025 performance. Key metrics show *significant improvement* across all sectors.",
+            "key_findings": "1. Revenue increased by **15%**\n2. Customer satisfaction improved to *92%*\n3. New market entry was `successful`",
+            "recommendations": "Based on our analysis, we recommend:\n- Expand into [new markets](https://example.com/markets)\n- Invest in **R&D**\n- Focus on *customer retention*",
+            "conclusion": "The quarter exceeded expectations. Continued focus on innovation will drive future growth.",
         }
 
         _replace_placeholders_in_document(doc, context)
@@ -704,16 +688,14 @@ class TestComplexDocuments:
 # Edge Cases and Error Handling Tests
 # =============================================================================
 
+
 class TestEdgeCases:
     """Tests for edge cases and error handling."""
 
     def test_placeholder_with_underscore(self):
         """Test placeholder names with underscores."""
         doc = create_test_document_with_placeholder("{{first_name}} {{last_name}}")
-        context = {
-            "first_name": "John",
-            "last_name": "Doe"
-        }
+        context = {"first_name": "John", "last_name": "Doe"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -723,11 +705,7 @@ class TestEdgeCases:
     def test_placeholder_with_numbers(self):
         """Test placeholder names with numbers."""
         doc = create_test_document_with_placeholder("{{item1}} {{item2}} {{item3}}")
-        context = {
-            "item1": "First",
-            "item2": "Second",
-            "item3": "Third"
-        }
+        context = {"item1": "First", "item2": "Second", "item3": "Third"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -748,11 +726,7 @@ class TestEdgeCases:
     def test_consecutive_placeholders(self):
         """Test placeholders directly next to each other."""
         doc = create_test_document_with_placeholder("{{first}}{{second}}{{third}}")
-        context = {
-            "first": "A",
-            "second": "B",
-            "third": "C"
-        }
+        context = {"first": "A", "second": "B", "third": "C"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -796,6 +770,7 @@ class TestEdgeCases:
 # YAML Registration Tests
 # =============================================================================
 
+
 class TestYAMLRegistration:
     """Tests for YAML-based template registration."""
 
@@ -831,6 +806,7 @@ templates:
     def test_yaml_loading(self, sample_yaml_config):
         """Test that YAML config is loaded correctly."""
         import yaml
+
         content = sample_yaml_config.read_text(encoding="utf-8")
         config = yaml.safe_load(content)
 
@@ -852,6 +828,7 @@ templates:
 # =============================================================================
 # List (Bullet Points and Numbered Lists) Tests
 # =============================================================================
+
 
 class TestListsInPlaceholders:
     """Tests for bullet points and numbered lists in placeholder values."""
@@ -895,9 +872,11 @@ Some text here
         para = doc.add_paragraph()
         para.add_run("{{items}}")
 
-        context = {"items": """- Apple
+        context = {
+            "items": """- Apple
 - Banana
-- Orange"""}
+- Orange"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -907,8 +886,7 @@ Some text here
         # Verify list items were created as separate paragraphs
         doc2 = Document(path)
         # Should have list paragraphs
-        list_paragraphs = [p for p in doc2.paragraphs if p.text.strip() and
-                          ('Apple' in p.text or 'Banana' in p.text or 'Orange' in p.text)]
+        list_paragraphs = [p for p in doc2.paragraphs if p.text.strip() and ("Apple" in p.text or "Banana" in p.text or "Orange" in p.text)]
         assert len(list_paragraphs) >= 3
 
     def test_simple_ordered_list(self):
@@ -917,9 +895,11 @@ Some text here
         para = doc.add_paragraph()
         para.add_run("{{steps}}")
 
-        context = {"steps": """1. First step
+        context = {
+            "steps": """1. First step
 2. Second step
-3. Third step"""}
+3. Third step"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -928,8 +908,7 @@ Some text here
 
         # Verify list items were created
         doc2 = Document(path)
-        list_paragraphs = [p for p in doc2.paragraphs if p.text.strip() and
-                          ('First step' in p.text or 'Second step' in p.text or 'Third step' in p.text)]
+        list_paragraphs = [p for p in doc2.paragraphs if p.text.strip() and ("First step" in p.text or "Second step" in p.text or "Third step" in p.text)]
         assert len(list_paragraphs) >= 3
 
     def test_unordered_list_with_formatting(self):
@@ -938,10 +917,12 @@ Some text here
         para = doc.add_paragraph()
         para.add_run("{{items}}")
 
-        context = {"items": """- **Bold item**
+        context = {
+            "items": """- **Bold item**
 - *Italic item*
 - Item with `code`
-- Item with [link](https://example.com)"""}
+- Item with [link](https://example.com)"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -954,9 +935,11 @@ Some text here
         para = doc.add_paragraph()
         para.add_run("{{steps}}")
 
-        context = {"steps": """1. **Important first step**
+        context = {
+            "steps": """1. **Important first step**
 2. Do *something* here
-3. Use `function()` to complete"""}
+3. Use `function()` to complete"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -969,10 +952,12 @@ Some text here
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {"content": """Here are the key points:
+        context = {
+            "content": """Here are the key points:
 - First point
 - Second point
-- Third point"""}
+- Third point"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -985,11 +970,13 @@ Some text here
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {"content": """- First item
+        context = {
+            "content": """- First item
 - Second item
 - Third item
 
-That's all for now."""}
+That's all for now."""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1002,7 +989,8 @@ That's all for now."""}
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {"content": """Shopping list:
+        context = {
+            "content": """Shopping list:
 - Apples
 - Bananas
 - Oranges
@@ -1010,7 +998,8 @@ That's all for now."""}
 Steps to follow:
 1. Go to store
 2. Buy items
-3. Return home"""}
+3. Return home"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1023,11 +1012,13 @@ Steps to follow:
         para = doc.add_paragraph()
         para.add_run("{{items}}")
 
-        context = {"items": """- Main item 1
+        context = {
+            "items": """- Main item 1
    - Sub item 1.1
    - Sub item 1.2
 - Main item 2
-   - Sub item 2.1"""}
+   - Sub item 2.1"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1040,11 +1031,13 @@ Steps to follow:
         para = doc.add_paragraph()
         para.add_run("{{steps}}")
 
-        context = {"steps": """1. First main step
+        context = {
+            "steps": """1. First main step
    1. Sub-step 1.1
    2. Sub-step 1.2
 2. Second main step
-   1. Sub-step 2.1"""}
+   1. Sub-step 2.1"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1057,9 +1050,11 @@ Steps to follow:
         para = doc.add_paragraph()
         para.add_run("Before: {{list}} After the list.")
 
-        context = {"list": """- Item A
+        context = {
+            "list": """- Item A
 - Item B
-- Item C"""}
+- Item C"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1078,9 +1073,11 @@ Steps to follow:
         para = doc.add_paragraph()
         para.add_run("{{items}}")
 
-        context = {"items": """* Apple
+        context = {
+            "items": """* Apple
 * Banana
-* Orange"""}
+* Orange"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1093,9 +1090,11 @@ Steps to follow:
         para = doc.add_paragraph()
         para.add_run("{{items}}")
 
-        context = {"items": """+ Apple
+        context = {
+            "items": """+ Apple
 + Banana
-+ Orange"""}
++ Orange"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1110,13 +1109,15 @@ Steps to follow:
         """
         doc = Document()
         table = doc.add_table(rows=2, cols=1)
-        table.style = 'Table Grid'
+        table.style = "Table Grid"
         table.cell(0, 0).text = "Items"
         table.cell(1, 0).text = "{{items}}"
 
-        context = {"items": """- Item 1
+        context = {
+            "items": """- Item 1
 - Item 2
-- Item 3"""}
+- Item 3"""
+        }
 
         # This should work without error, lists just won't be formatted as lists
         _replace_placeholders_in_document(doc, context)
@@ -1147,7 +1148,7 @@ Steps to follow:
 1. Install the package
 2. Configure settings
 3. Run the setup wizard
-4. Deploy to production"""
+4. Deploy to production""",
         }
 
         _replace_placeholders_in_document(doc, context)
@@ -1161,11 +1162,13 @@ Steps to follow:
         para = doc.add_paragraph()
         para.add_run("{{items}}")
 
-        context = {"items": """- First item
+        context = {
+            "items": """- First item
 
 - Second item
 
-- Third item"""}
+- Third item"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1197,15 +1200,13 @@ Steps to follow:
         assert any("Gamma" in p.text for p in non_empty)
 
         # There must be no empty paragraphs (the bug would leave one at the top)
-        assert len(empty) == 0, (
-            f"Expected no empty paragraphs, but found {len(empty)}: "
-            f"{[p.text for p in doc2.paragraphs]}"
-        )
+        assert len(empty) == 0, f"Expected no empty paragraphs, but found {len(empty)}: {[p.text for p in doc2.paragraphs]}"
 
 
 # =============================================================================
 # Heading Tests in Custom Templates
 # =============================================================================
+
 
 class TestHeadingsInPlaceholders:
     """Tests for markdown headings in placeholder values."""
@@ -1216,8 +1217,10 @@ class TestHeadingsInPlaceholders:
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {"content": """# Main Title
-This is some body text."""}
+        context = {
+            "content": """# Main Title
+This is some body text."""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1227,7 +1230,7 @@ This is some body text."""}
         # Verify heading was created
         doc2 = Document(str(path))
         # Check that heading style was applied
-        heading_paragraphs = [p for p in doc2.paragraphs if p.style.name.startswith('Heading')]
+        heading_paragraphs = [p for p in doc2.paragraphs if p.style.name.startswith("Heading")]
         assert len(heading_paragraphs) >= 1
 
     def test_multiple_heading_levels(self):
@@ -1236,14 +1239,16 @@ This is some body text."""}
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {"content": """# Heading 1
+        context = {
+            "content": """# Heading 1
 Introduction text.
 
 ## Heading 2
 More details here.
 
 ### Heading 3
-Even more specific."""}
+Even more specific."""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1256,8 +1261,10 @@ Even more specific."""}
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {"content": """# **Bold** and *italic* heading
-Regular paragraph text."""}
+        context = {
+            "content": """# **Bold** and *italic* heading
+Regular paragraph text."""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1270,7 +1277,8 @@ Regular paragraph text."""}
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {"content": """# Shopping List
+        context = {
+            "content": """# Shopping List
 - Apples
 - Bananas
 - Oranges
@@ -1278,7 +1286,8 @@ Regular paragraph text."""}
 ## Steps
 1. Go to store
 2. Buy items
-3. Return home"""}
+3. Return home"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1291,12 +1300,14 @@ Regular paragraph text."""}
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {"content": """# Heading 1
+        context = {
+            "content": """# Heading 1
 ## Heading 2
 ### Heading 3
 #### Heading 4
 ##### Heading 5
-###### Heading 6"""}
+###### Heading 6"""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1311,7 +1322,8 @@ Regular paragraph text."""}
         para.add_run("{{sections}}")
         doc.add_paragraph("Footer text")
 
-        context = {"sections": """# Introduction
+        context = {
+            "sections": """# Introduction
 This document covers important topics.
 
 ## Background
@@ -1323,7 +1335,8 @@ Some background information.
 - Point three
 
 ## Conclusion
-Final thoughts here."""}
+Final thoughts here."""
+        }
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1334,6 +1347,7 @@ Final thoughts here."""}
 # =============================================================================
 # Performance Tests
 # =============================================================================
+
 
 class TestPerformance:
     """Performance-related tests."""
@@ -1362,7 +1376,7 @@ class TestPerformance:
 
         rows, cols = 10, 5
         table = doc.add_table(rows=rows, cols=cols)
-        table.style = 'Table Grid'
+        table.style = "Table Grid"
 
         context = {}
         for i in range(rows):
@@ -1380,6 +1394,7 @@ class TestPerformance:
 # =============================================================================
 # Integration Tests
 # =============================================================================
+
 
 class TestIntegration:
     """Integration tests using actual template files."""
@@ -1403,12 +1418,12 @@ class TestIntegration:
             "subject": "Nabídka spolupráce",
             "salutation": "Vážený pane inženýre,",
             "body": "dovolujeme si Vám nabídnout **exkluzivní spolupráci** v oblasti "
-                    "*softwarového vývoje*. Naše společnost disponuje týmem zkušených "
-                    "vývojářů a můžeme Vám pomoci s realizací Vašich projektů.\n\n"
-                    "Více informací naleznete na [našich stránkách](https://example.com).",
+            "*softwarového vývoje*. Naše společnost disponuje týmem zkušených "
+            "vývojářů a můžeme Vám pomoci s realizací Vašich projektů.\n\n"
+            "Více informací naleznete na [našich stránkách](https://example.com).",
             "closing": "S úctou,",
             "sender_name": "Mgr. Jana Svobodová",
-            "sender_title": "Obchodní ředitelka"
+            "sender_title": "Obchodní ředitelka",
         }
 
         # Replace placeholders
@@ -1429,6 +1444,7 @@ class TestIntegration:
 # Markdown Tables in Placeholders Tests
 # =============================================================================
 
+
 class TestTablesInPlaceholders:
     """Tests for markdown table syntax in placeholder values."""
 
@@ -1443,9 +1459,7 @@ class TestTablesInPlaceholders:
         para = doc.add_paragraph()
         para.add_run("{{data}}")
 
-        context = {
-            "data": "| Name | Age |\n|------|-----|\n| Alice | 30 |\n| Bob | 25 |"
-        }
+        context = {"data": "| Name | Age |\n|------|-----|\n| Alice | 30 |\n| Bob | 25 |"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1467,9 +1481,7 @@ class TestTablesInPlaceholders:
         para = doc.add_paragraph()
         para.add_run("Before {{content}} After")
 
-        context = {
-            "content": "Here is the data:\n\n| H1 | H2 |\n|----|----|\n| V1 | V2 |"
-        }
+        context = {"content": "Here is the data:\n\n| H1 | H2 |\n|----|----|\n| V1 | V2 |"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1485,9 +1497,7 @@ class TestTablesInPlaceholders:
         para = doc.add_paragraph()
         para.add_run("{{report}}")
 
-        context = {
-            "report": "| Feature | Status |\n|---------|--------|\n| **Auth** | *Done* |\n| `API` | Pending |"
-        }
+        context = {"report": "| Feature | Status |\n|---------|--------|\n| **Auth** | *Done* |\n| `API` | Pending |"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1503,9 +1513,7 @@ class TestTablesInPlaceholders:
         para = doc.add_paragraph()
         para.add_run("{{content}}")
 
-        context = {
-            "content": "Summary:\n\n- Item 1\n- Item 2\n\n| Col A | Col B |\n|-------|-------|\n| X | Y |"
-        }
+        context = {"content": "Summary:\n\n- Item 1\n- Item 2\n\n| Col A | Col B |\n|-------|-------|\n| X | Y |"}
 
         _replace_placeholders_in_document(doc, context)
 
@@ -1519,6 +1527,7 @@ class TestTablesInPlaceholders:
 # =============================================================================
 # Header/Footer with Existing Template Tests
 # =============================================================================
+
 
 class TestHeaderFooterWithTemplate:
     """Tests for header/footer handling when the template already has headers/footers."""
@@ -1536,7 +1545,7 @@ class TestHeaderFooterWithTemplate:
 
         doc.add_paragraph("Body content for visual inspection.")
 
-        set_header_footer(doc, "New header text", 'header')
+        set_header_footer(doc, "New header text", "header")
 
         # Alignment should be preserved from template
         assert section.header.paragraphs[0].alignment == WD_ALIGN_PARAGRAPH.RIGHT
@@ -1556,7 +1565,7 @@ class TestHeaderFooterWithTemplate:
         doc.add_paragraph("Section 2 content.")
         assert len(doc.sections) == 2
 
-        set_header_footer(doc, "Page {page} of {pages}", 'footer')
+        set_header_footer(doc, "Page {page} of {pages}", "footer")
 
         # Both sections should have the footer
         for section in doc.sections:
@@ -1578,7 +1587,7 @@ class TestHeaderFooterWithTemplate:
 
         doc.add_paragraph("Body content for visual inspection.")
 
-        set_header_footer(doc, "Replacement header", 'header')
+        set_header_footer(doc, "Replacement header", "header")
 
         header_text = section.header.paragraphs[0].text
         assert "Original header content" not in header_text
@@ -1594,7 +1603,7 @@ class TestHeaderFooterWithTemplate:
         doc = Document()
         doc.add_paragraph("Body content for visual inspection.")
 
-        set_header_footer(doc, "Page {page} of {pages}", 'header')
+        set_header_footer(doc, "Page {page} of {pages}", "header")
 
         # Should have runs with text and field elements
         p = doc.sections[0].header.paragraphs[0]
@@ -1636,6 +1645,7 @@ class TestHeaderFooterWithTemplate:
 # =============================================================================
 # Font Color Preservation Tests
 # =============================================================================
+
 
 class TestFontColorPreservation:
     """Tests for preserving font color from template placeholders."""
@@ -1736,6 +1746,7 @@ class TestFontColorPreservation:
 # Comprehensive Visual Inspection Test
 # =============================================================================
 
+
 class TestVisualInspection:
     """Comprehensive test for manual visual inspection of template-based documents.
 
@@ -1806,7 +1817,7 @@ class TestVisualInspection:
         # === TABLE SECTION ===
         doc.add_heading("5. Data Table", level=1)
         table = doc.add_table(rows=4, cols=3)
-        table.style = 'Table Grid'
+        table.style = "Table Grid"
 
         # Headers
         table.cell(0, 0).text = "{{col1_header}}"
@@ -1816,7 +1827,7 @@ class TestVisualInspection:
         # Data rows
         for i in range(1, 4):
             for j in range(3):
-                table.cell(i, j).text = f"{{{{row{i}_col{j+1}}}}}"
+                table.cell(i, j).text = f"{{{{row{i}_col{j + 1}}}}}"
 
         doc.add_paragraph()  # Spacing
 
@@ -1843,16 +1854,13 @@ class TestVisualInspection:
             "document_type": "Visual Inspection Report",
             "year": "2026",
             "confidentiality": "*Confidential*",
-
             # Title
             "document_title": "Comprehensive Template Visual Inspection",
-
             # Introduction
             "introduction": """This document demonstrates **all supported features** of the template placeholder system. 
 It includes *inline formatting*, `code elements`, and [hyperlinks](https://example.com).
 
 The purpose is to allow **manual visual inspection** to verify correct rendering in Word.""",
-
             # Formatting demo
             "formatting_demo": """Here you can see various formatting options:
 
@@ -1864,7 +1872,6 @@ The purpose is to allow **manual visual inspection** to verify correct rendering
 - *Italic with **nested bold** inside*
 
 All these should render correctly in the Word document.""",
-
             # Unordered list
             "unordered_list": """- First bullet item
 - Second item with **bold**
@@ -1873,7 +1880,6 @@ All these should render correctly in the Word document.""",
 - Fifth item with [link](https://example.com)
    - Nested sub-item 1
    - Nested sub-item 2""",
-
             # Ordered list
             "ordered_list": """1. First numbered step
 2. Second step with **important** note
@@ -1882,7 +1888,6 @@ All these should render correctly in the Word document.""",
    1. Sub-step 4.1
    2. Sub-step 4.2
 5. Fifth and final step""",
-
             # Mixed lists
             "mixed_lists": """Features to implement:
 - User authentication
@@ -1894,7 +1899,6 @@ Implementation order:
 2. Write unit tests
 3. Implement features
 4. Deploy to production""",
-
             # Dynamic sections with headings
             "dynamic_sections": """## Section A: Overview
 This section provides an overview of the topic.
@@ -1911,7 +1915,6 @@ Here we discuss implementation details.
 - Key point 1
 - Key point 2
 - Key point 3""",
-
             # Table data
             "col1_header": "**Name**",
             "col2_header": "**Role**",
@@ -1925,7 +1928,6 @@ Here we discuss implementation details.
             "row3_col1": "Petr Černý",
             "row3_col2": "*Manager*",
             "row3_col3": "On Leave",
-
             # Unicode content
             "unicode_content": """This section tests unicode character handling:
 
@@ -1938,7 +1940,6 @@ Here we discuss implementation details.
 **Emoji:** 👋 🌍 ⭐ ✨ ✓ ❤️ 🎉
 
 **Special XML:** 5 > 3 and 2 < 4 and A & B""",
-
             # Conclusion
             "conclusion": """This document has demonstrated **all major features** of the template system:
 
@@ -1950,13 +1951,12 @@ Here we discuss implementation details.
 6. Unicode and special character handling
 
 If all elements above render correctly, the template system is working as expected! 🎉""",
-
             # Signature
             "signature_block": """**Prepared by:**
 *Quality Assurance Team*
 Acme Corporation
 
-[Contact us](https://example.com/contact)"""
+[Contact us](https://example.com/contact)""",
         }
 
         # Replace all placeholders
@@ -1980,4 +1980,3 @@ Acme Corporation
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
-

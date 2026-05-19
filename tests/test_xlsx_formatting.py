@@ -1,6 +1,5 @@
 """Tests for XLSX conditional formatting."""
 
-
 import pytest
 from openpyxl import Workbook, load_workbook
 

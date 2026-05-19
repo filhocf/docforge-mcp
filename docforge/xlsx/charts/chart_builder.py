@@ -105,6 +105,7 @@ def create_excel_chart(
         import io
 
         from docforge.upload.main import upload_file
+
         buffer = io.BytesIO()
         wb.save(buffer)
         buffer.seek(0)

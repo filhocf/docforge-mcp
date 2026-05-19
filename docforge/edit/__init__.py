@@ -10,7 +10,14 @@ from docforge.edit.pptx_editor import delete_pptx_slide, edit_pptx_slide_text, r
 from docforge.edit.xlsx_editor import delete_xlsx_row, edit_xlsx_cell, insert_xlsx_row
 
 __all__ = [
-    "edit_docx_paragraph", "delete_docx_paragraph", "search_replace_docx", "insert_docx_paragraph",
-    "edit_xlsx_cell", "insert_xlsx_row", "delete_xlsx_row",
-    "edit_pptx_slide_text", "delete_pptx_slide", "reorder_pptx_slides",
+    "edit_docx_paragraph",
+    "delete_docx_paragraph",
+    "search_replace_docx",
+    "insert_docx_paragraph",
+    "edit_xlsx_cell",
+    "insert_xlsx_row",
+    "delete_xlsx_row",
+    "edit_pptx_slide_text",
+    "delete_pptx_slide",
+    "reorder_pptx_slides",
 ]

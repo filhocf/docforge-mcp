@@ -89,15 +89,19 @@ def find_pptx_templates() -> Tuple[Optional[str], Optional[str]]:
 
     Returns tuple[str|None, str|None] for (4:3, 16:9).
     """
-    t43 = _resolve_from_candidates([
-        "custom_pptx_template_4_3.pptx",
-        "default_pptx_template_4_3.pptx",
-    ])
+    t43 = _resolve_from_candidates(
+        [
+            "custom_pptx_template_4_3.pptx",
+            "default_pptx_template_4_3.pptx",
+        ]
+    )
 
-    t169 = _resolve_from_candidates([
-        "custom_pptx_template_16_9.pptx",
-        "default_pptx_template_16_9.pptx",
-    ])
+    t169 = _resolve_from_candidates(
+        [
+            "custom_pptx_template_16_9.pptx",
+            "default_pptx_template_16_9.pptx",
+        ]
+    )
 
     return (t43, t169)
 
@@ -109,10 +113,12 @@ def find_docx_template() -> Optional[str]:
     1) custom_docx_template.docx
     2) default_docx_template.docx
     """
-    return _resolve_from_candidates([
-        "custom_docx_template.docx",
-        "default_docx_template.docx",
-    ])
+    return _resolve_from_candidates(
+        [
+            "custom_docx_template.docx",
+            "default_docx_template.docx",
+        ]
+    )
 
 
 def find_email_template(filename: Optional[str] = None) -> Optional[str]:
@@ -127,7 +133,9 @@ def find_email_template(filename: Optional[str] = None) -> Optional[str]:
         found = find_file_in_template_dirs(filename)
         return str(found) if found else None
 
-    return _resolve_from_candidates([
-        "custom_email_template.html",
-        "default_email_template.html",
-    ])
+    return _resolve_from_candidates(
+        [
+            "custom_email_template.html",
+            "default_email_template.html",
+        ]
+    )

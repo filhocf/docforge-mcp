@@ -26,8 +26,7 @@ from .helpers import (
 logger = logging.getLogger(__name__)
 
 
-def markdown_to_word(markdown_content, title=None, author=None, subject=None,
-                     header_text=None, footer_text=None, include_toc=False, file_name=None):
+def markdown_to_word(markdown_content, title=None, author=None, subject=None, header_text=None, footer_text=None, include_toc=False, file_name=None):
     """Convert Markdown to Word document."""
     logger.info("Starting markdown_to_word conversion")
     path = load_templates()
@@ -58,12 +57,12 @@ def markdown_to_word(markdown_content, title=None, author=None, subject=None,
 
     # Set header and footer
     if header_text:
-        set_header_footer(doc, header_text, 'header')
+        set_header_footer(doc, header_text, "header")
     if footer_text:
-        set_header_footer(doc, footer_text, 'footer')
+        set_header_footer(doc, footer_text, "footer")
 
     # Split content into lines, but preserve line breaks within paragraphs
-    lines = markdown_content.split('\n')
+    lines = markdown_content.split("\n")
     i = 0
 
     # Simple parsing counters for summary
@@ -98,7 +97,7 @@ def markdown_to_word(markdown_content, title=None, author=None, subject=None,
                 continue
 
             # Check if this line ends with two spaces (line break)
-            if line.endswith('  '):
+            if line.endswith("  "):
                 # Collect lines that are part of the same paragraph (connected by line breaks)
                 paragraph_lines = []
                 while i < len(lines):
@@ -109,23 +108,23 @@ def markdown_to_word(markdown_content, title=None, author=None, subject=None,
                     paragraph_lines.append(current_line)
                     i += 1
 
-                    if not current_line.endswith('  '):
+                    if not current_line.endswith("  "):
                         break
 
-                full_text = '  \n'.join(paragraph_lines)
+                full_text = "  \n".join(paragraph_lines)
                 first_line = paragraph_lines[0].strip()
 
-                if first_line.startswith('#'):
-                    header_level = len(first_line) - len(first_line.lstrip('#'))
-                    header_text = first_line.lstrip('#').strip()
-                    heading = doc.add_heading('', level=min(header_level, 6))
+                if first_line.startswith("#"):
+                    header_level = len(first_line) - len(first_line.lstrip("#"))
+                    header_text = first_line.lstrip("#").strip()
+                    heading = doc.add_heading("", level=min(header_level, 6))
                     parse_inline_formatting(header_text, heading)
                     headers_count += 1
                     logger.debug(f"Header (level {header_level}): {header_text}")
-                elif first_line.startswith('>'):
+                elif first_line.startswith(">"):
                     quote_text = full_text[1:].strip()
                     quote_paragraph = doc.add_paragraph()
-                    quote_paragraph.style = 'Quote'
+                    quote_paragraph.style = "Quote"
                     parse_inline_formatting(quote_text, quote_paragraph)
                     quotes_count += 1
                 else:
@@ -136,27 +135,27 @@ def markdown_to_word(markdown_content, title=None, author=None, subject=None,
 
             line = line.strip()
 
-            if line.startswith('#'):
-                header_level = len(line) - len(line.lstrip('#'))
-                header_text = line.lstrip('#').strip()
-                heading = doc.add_heading('', level=min(header_level, 6))
+            if line.startswith("#"):
+                header_level = len(line) - len(line.lstrip("#"))
+                header_text = line.lstrip("#").strip()
+                heading = doc.add_heading("", level=min(header_level, 6))
                 parse_inline_formatting(header_text, heading)
                 headers_count += 1
                 logger.debug(f"Header (level {header_level}): {header_text}")
                 i += 1
 
-            elif line.startswith('|'):
+            elif line.startswith("|"):
                 table_data, i = parse_table(lines, i)
                 if table_data:
                     add_table_to_doc(table_data, doc)
                     tables_count += 1
                     logger.debug(f"Added table with {len(table_data)} rows")
 
-            elif re.match(r'^\d+\.\s+', line):
+            elif re.match(r"^\d+\.\s+", line):
                 i, _ = process_list_items(lines, i, doc, True, 0)
                 ordered_lists += 1
 
-            elif re.match(r'^[-*+]\s+', line):
+            elif re.match(r"^[-*+]\s+", line):
                 i, _ = process_list_items(lines, i, doc, False, 0)
                 unordered_lists += 1
 
@@ -171,7 +170,7 @@ def markdown_to_word(markdown_content, title=None, author=None, subject=None,
                 paragraphs_count += 1
                 i += 1
 
-            elif (img_match := IMAGE_PATTERN.match(line)):
+            elif img_match := IMAGE_PATTERN.match(line):
                 alt_text, url = img_match.groups()
                 add_image_to_doc(doc, url, alt_text)
                 paragraphs_count += 1
@@ -188,10 +187,10 @@ def markdown_to_word(markdown_content, title=None, author=None, subject=None,
                 else:
                     i, _ = process_alignment_block(lines, i + 1, doc, alignment, return_elements=False)
 
-            elif line.startswith('>'):
+            elif line.startswith(">"):
                 quote_text = line[1:].strip()
                 quote_paragraph = doc.add_paragraph()
-                quote_paragraph.style = 'Quote'
+                quote_paragraph.style = "Quote"
                 parse_inline_formatting(quote_text, quote_paragraph)
                 quotes_count += 1
                 i += 1

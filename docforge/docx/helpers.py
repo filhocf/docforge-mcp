@@ -34,27 +34,27 @@ def add_hyperlink(paragraph, text, url, color="0000FF", underline=True):
         part = paragraph.part
         r_id = part.relate_to(url, RELATIONSHIP_TYPE.HYPERLINK, is_external=True)
 
-        hyperlink = OxmlElement('w:hyperlink')
-        hyperlink.set(qn('r:id'), r_id)
+        hyperlink = OxmlElement("w:hyperlink")
+        hyperlink.set(qn("r:id"), r_id)
 
-        new_run = OxmlElement('w:r')
-        rPr = OxmlElement('w:rPr')
+        new_run = OxmlElement("w:r")
+        rPr = OxmlElement("w:rPr")
 
         if underline:
-            u = OxmlElement('w:u')
-            u.set(qn('w:val'), 'single')
+            u = OxmlElement("w:u")
+            u.set(qn("w:val"), "single")
             rPr.append(u)
 
         if color:
-            c = OxmlElement('w:color')
-            c.set(qn('w:val'), color)
+            c = OxmlElement("w:color")
+            c.set(qn("w:val"), color)
             rPr.append(c)
 
         new_run.append(rPr)
 
-        text_elem = OxmlElement('w:t')
+        text_elem = OxmlElement("w:t")
         text_elem.text = text
-        text_elem.set(qn('xml:space'), 'preserve')
+        text_elem.set(qn("xml:space"), "preserve")
         new_run.append(text_elem)
 
         hyperlink.append(new_run)
@@ -68,6 +68,7 @@ def add_hyperlink(paragraph, text, url, color="0000FF", underline=True):
 # Inline formatting
 # ---------------------------------------------------------------------------
 
+
 def parse_inline_formatting(text, paragraph, bold=False, italic=False):
     """Parse inline markdown formatting like **bold**, *italic*, and [links](url)
 
@@ -80,7 +81,7 @@ def parse_inline_formatting(text, paragraph, bold=False, italic=False):
     escape_ctx = {"map": {}, "counter": 0}
     text = _handle_escapes(text, escape_ctx)
 
-    line_parts = text.split('  \n')
+    line_parts = text.split("  \n")
     for line_idx, line_part in enumerate(line_parts):
         if not line_part and line_idx == len(line_parts) - 1:
             continue
@@ -98,13 +99,13 @@ def _apply_formatting(run, bold=False, italic=False):
 
 
 _INLINE_FORMAT_RE = re.compile(
-    r'(\*{3}(?:[^*]|\*(?!\*{2}))+\*{3}'  # ***bold italic***
-    r'|\*\*(?:[^*]|\*(?!\*))+\*\*'       # **bold**
-    r'|~~.+?~~'                           # ~~strikethrough~~
-    r'|__(?!_).+?__'                      # __underline__
-    r'|\*(?:[^*]|\*\*[^*]+\*\*)+\*'       # *italic* (allows nested **bold**)
-    r'|`[^`]+`'                           # `code`
-    r'|\[[^\]]*\]\([^)]*\))'             # [link](url)
+    r"(\*{3}(?:[^*]|\*(?!\*{2}))+\*{3}"  # ***bold italic***
+    r"|\*\*(?:[^*]|\*(?!\*))+\*\*"  # **bold**
+    r"|~~.+?~~"  # ~~strikethrough~~
+    r"|__(?!_).+?__"  # __underline__
+    r"|\*(?:[^*]|\*\*[^*]+\*\*)+\*"  # *italic* (allows nested **bold**)
+    r"|`[^`]+`"  # `code`
+    r"|\[[^\]]*\]\([^)]*\))"  # [link](url)
 )
 
 
@@ -113,26 +114,26 @@ def _parse_formatting_segment(text, paragraph, bold=False, italic=False, escape_
     for part in _INLINE_FORMAT_RE.split(text):
         if not part:
             continue
-        if part.startswith('***') and part.endswith('***') and len(part) > 6:
+        if part.startswith("***") and part.endswith("***") and len(part) > 6:
             _parse_formatting_segment(part[3:-3], paragraph, bold=True, italic=True, escape_ctx=escape_ctx)
-        elif part.startswith('**') and part.endswith('**'):
+        elif part.startswith("**") and part.endswith("**"):
             _parse_formatting_segment(part[2:-2], paragraph, bold=True, italic=italic, escape_ctx=escape_ctx)
-        elif part.startswith('~~') and part.endswith('~~'):
+        elif part.startswith("~~") and part.endswith("~~"):
             run = paragraph.add_run(_restore_escapes(part[2:-2], escape_ctx))
             run.font.strike = True
             _apply_formatting(run, bold, italic)
-        elif part.startswith('__') and part.endswith('__') and not part.startswith('___'):
+        elif part.startswith("__") and part.endswith("__") and not part.startswith("___"):
             run = paragraph.add_run(_restore_escapes(part[2:-2], escape_ctx))
             run.font.underline = True
             _apply_formatting(run, bold, italic)
-        elif part.startswith('*') and part.endswith('*') and not part.startswith('**'):
+        elif part.startswith("*") and part.endswith("*") and not part.startswith("**"):
             _parse_formatting_segment(part[1:-1], paragraph, bold=bold, italic=True, escape_ctx=escape_ctx)
-        elif part.startswith('`') and part.endswith('`'):
+        elif part.startswith("`") and part.endswith("`"):
             run = paragraph.add_run(_restore_escapes(part[1:-1], escape_ctx))
-            run.font.name = 'Courier New'
+            run.font.name = "Courier New"
             _apply_formatting(run, bold, italic)
-        elif part.startswith('[') and '](' in part and part.endswith(')'):
-            link_match = re.match(r'\[(.*?)]\((.*?)\)', part)
+        elif part.startswith("[") and "](" in part and part.endswith(")"):
+            link_match = re.match(r"\[(.*?)]\((.*?)\)", part)
             if link_match:
                 link_text = _restore_escapes(link_match.group(1), escape_ctx)
                 link_url = _restore_escapes(link_match.group(2), escape_ctx)
@@ -155,7 +156,7 @@ def _handle_escapes(text, escape_ctx):
         escape_ctx["counter"] += 1
         return placeholder
 
-    return re.sub(r'\\(.)', _replace, text)
+    return re.sub(r"\\(.)", _replace, text)
 
 
 def _restore_escapes(text, escape_ctx):
@@ -172,6 +173,7 @@ def _restore_escapes(text, escape_ctx):
 # Tables
 # ---------------------------------------------------------------------------
 
+
 def parse_table(lines, start_idx):
     """Parse markdown table and return the table data and next line index."""
     table_lines = []
@@ -179,7 +181,7 @@ def parse_table(lines, start_idx):
 
     while i < len(lines):
         line = lines[i].strip()
-        if line.startswith('|') and line.endswith('|'):
+        if line.startswith("|") and line.endswith("|"):
             table_lines.append(line)
             i += 1
         else:
@@ -190,9 +192,9 @@ def parse_table(lines, start_idx):
 
     table_data = []
     for line in table_lines:
-        if '---' in line or ':-:' in line or ':--' in line or '--:' in line:
+        if "---" in line or ":-:" in line or ":--" in line or "--:" in line:
             continue
-        cells = [cell.strip() for cell in line.split('|')[1:-1]]
+        cells = [cell.strip() for cell in line.split("|")[1:-1]]
         table_data.append(cells)
 
     return table_data, i
@@ -212,7 +214,7 @@ def add_table_to_doc(table_data, doc):
 
     try:
         word_table = doc.add_table(rows=rows, cols=cols)
-        word_table.style = 'Table Grid'
+        word_table.style = "Table Grid"
     except Exception as e:
         logger.warning("Failed to create table with 'Table Grid' style, using default: %s", e)
         try:
@@ -239,8 +241,8 @@ def add_table_to_doc(table_data, doc):
 # Lists
 # ---------------------------------------------------------------------------
 
-def process_list_items(lines, start_idx, doc, is_ordered=False, level=0,
-                       return_elements=False):
+
+def process_list_items(lines, start_idx, doc, is_ordered=False, level=0, return_elements=False):
     """Process markdown list items with proper Word numbering.
 
     When *return_elements* is True the created paragraph XML elements are
@@ -250,8 +252,8 @@ def process_list_items(lines, start_idx, doc, is_ordered=False, level=0,
     Returns:
         Tuple of (next_line_index, list_of_elements | None).
     """
-    bullet_styles = ['List Bullet', 'List Bullet 2', 'List Bullet 3']
-    number_styles = ['List Number', 'List Number 2', 'List Number 3']
+    bullet_styles = ["List Bullet", "List Bullet 2", "List Bullet 3"]
+    number_styles = ["List Number", "List Number 2", "List Number 3"]
 
     style_array = number_styles if is_ordered else bullet_styles
     style = style_array[min(level, len(style_array) - 1)]
@@ -270,9 +272,9 @@ def process_list_items(lines, start_idx, doc, is_ordered=False, level=0,
             break
 
         if is_ordered:
-            list_match = re.match(r'^\d+\.\s+(.+)', line)
+            list_match = re.match(r"^\d+\.\s+(.+)", line)
         else:
-            list_match = re.match(r'^[-*+]\s+(.+)', line)
+            list_match = re.match(r"^[-*+]\s+(.+)", line)
 
         if not list_match:
             break
@@ -298,12 +300,10 @@ def process_list_items(lines, start_idx, doc, is_ordered=False, level=0,
             next_level = next_indent // 3
 
             if next_level > level:
-                is_nested_ordered = bool(re.match(r'^\d+\.\s+', next_line))
-                is_nested_unordered = bool(re.match(r'^[-*+]\s+', next_line))
+                is_nested_ordered = bool(re.match(r"^\d+\.\s+", next_line))
+                is_nested_unordered = bool(re.match(r"^[-*+]\s+", next_line))
                 if is_nested_ordered or is_nested_unordered:
-                    i, nested = process_list_items(
-                        lines, i, doc, is_nested_ordered, next_level, return_elements
-                    )
+                    i, nested = process_list_items(lines, i, doc, is_nested_ordered, next_level, return_elements)
                     if return_elements and nested:
                         elements.extend(nested)
                 else:
@@ -318,25 +318,29 @@ def process_list_items(lines, start_idx, doc, is_ordered=False, level=0,
 # Block-level patterns (compiled once, used by many modules)
 # ---------------------------------------------------------------------------
 
-ORDERED_LIST_PATTERN = re.compile(r'^\d+\.\s+')
-UNORDERED_LIST_PATTERN = re.compile(r'^[-*+]\s+')
-HEADING_PATTERN = re.compile(r'^(#{1,6})\s+(.+)$')
-PAGE_BREAK_PATTERN = re.compile(r'^-{3,}\s*$')
-HORIZONTAL_LINE_PATTERN = re.compile(r'^\*{3,}\s*$')
-IMAGE_PATTERN = re.compile(r'^!\[([^\]]*)\]\(([^)]+)\)$')
-TABLE_LINE_PATTERN = re.compile(r'^\|.+\|$')
+ORDERED_LIST_PATTERN = re.compile(r"^\d+\.\s+")
+UNORDERED_LIST_PATTERN = re.compile(r"^[-*+]\s+")
+HEADING_PATTERN = re.compile(r"^(#{1,6})\s+(.+)$")
+PAGE_BREAK_PATTERN = re.compile(r"^-{3,}\s*$")
+HORIZONTAL_LINE_PATTERN = re.compile(r"^\*{3,}\s*$")
+IMAGE_PATTERN = re.compile(r"^!\[([^\]]*)\]\(([^)]+)\)$")
+TABLE_LINE_PATTERN = re.compile(r"^\|.+\|$")
 
 # All block-level patterns checked by contains_block_markdown
 _BLOCK_PATTERNS = [
-    ORDERED_LIST_PATTERN, UNORDERED_LIST_PATTERN, HEADING_PATTERN,
-    PAGE_BREAK_PATTERN, HORIZONTAL_LINE_PATTERN, IMAGE_PATTERN,
+    ORDERED_LIST_PATTERN,
+    UNORDERED_LIST_PATTERN,
+    HEADING_PATTERN,
+    PAGE_BREAK_PATTERN,
+    HORIZONTAL_LINE_PATTERN,
+    IMAGE_PATTERN,
     TABLE_LINE_PATTERN,
 ]
 
 
 def contains_block_markdown(value: str) -> bool:
     """Return True if *value* contains block-level markdown content."""
-    for line in value.split('\n'):
+    for line in value.split("\n"):
         stripped = line.strip()
         if any(p.match(stripped) for p in _BLOCK_PATTERNS):
             return True
@@ -349,16 +353,17 @@ def contains_block_markdown(value: str) -> bool:
 # Page break / horizontal line
 # ---------------------------------------------------------------------------
 
+
 def add_horizontal_line(doc):
     """Add a visual horizontal line (thin border) to the document."""
     p = doc.add_paragraph()
     pPr = p._p.get_or_add_pPr()
-    pBdr = OxmlElement('w:pBdr')
-    bottom = OxmlElement('w:bottom')
-    bottom.set(qn('w:val'), 'single')
-    bottom.set(qn('w:sz'), '6')
-    bottom.set(qn('w:space'), '1')
-    bottom.set(qn('w:color'), 'auto')
+    pBdr = OxmlElement("w:pBdr")
+    bottom = OxmlElement("w:bottom")
+    bottom.set(qn("w:val"), "single")
+    bottom.set(qn("w:sz"), "6")
+    bottom.set(qn("w:space"), "1")
+    bottom.set(qn("w:color"), "auto")
     pBdr.append(bottom)
     pPr.append(pBdr)
     return p
@@ -367,6 +372,7 @@ def add_horizontal_line(doc):
 # ---------------------------------------------------------------------------
 # Images
 # ---------------------------------------------------------------------------
+
 
 def add_image_to_doc(doc, url, alt_text, max_width_inches=None):
     """Add an image from a URL to the document.
@@ -401,26 +407,26 @@ def add_image_to_doc(doc, url, alt_text, max_width_inches=None):
 # ---------------------------------------------------------------------------
 
 ALIGNMENT_MAP = {
-    'right': WD_ALIGN_PARAGRAPH.RIGHT,
-    'center': WD_ALIGN_PARAGRAPH.CENTER,
-    'justify': WD_ALIGN_PARAGRAPH.JUSTIFY,
-    'left': WD_ALIGN_PARAGRAPH.LEFT,
+    "right": WD_ALIGN_PARAGRAPH.RIGHT,
+    "center": WD_ALIGN_PARAGRAPH.CENTER,
+    "justify": WD_ALIGN_PARAGRAPH.JUSTIFY,
+    "left": WD_ALIGN_PARAGRAPH.LEFT,
 }
 
 # Inline (single-line):  <center>text</center>  or  <div align="x">text</div>
 _ALIGN_INLINE_RE = re.compile(
-    r'^(?:<center>(.*)</center>'
+    r"^(?:<center>(.*)</center>"
     r'|<div\s+align="(right|center|justify|left)">(.*)</div>)$',
     re.IGNORECASE,
 )
 # Block open:  <center>  or  <div align="x">  (content on following lines)
 _ALIGN_OPEN_RE = re.compile(
-    r'^(?:<center>'
+    r"^(?:<center>"
     r'|<div\s+align="(right|center|justify|left)">)\s*$',
     re.IGNORECASE,
 )
 # Block close:  </center>  or  </div>
-_ALIGN_CLOSE_RE = re.compile(r'^</(?:center|div)>\s*$', re.IGNORECASE)
+_ALIGN_CLOSE_RE = re.compile(r"^</(?:center|div)>\s*$", re.IGNORECASE)
 
 
 def detect_alignment(line):
@@ -438,7 +444,7 @@ def detect_alignment(line):
 
     m = _ALIGN_OPEN_RE.match(line)
     if m:
-        align = ALIGNMENT_MAP.get((m.group(1) or 'center').lower(), WD_ALIGN_PARAGRAPH.CENTER)
+        align = ALIGNMENT_MAP.get((m.group(1) or "center").lower(), WD_ALIGN_PARAGRAPH.CENTER)
         return None, align
 
     return None
@@ -470,25 +476,26 @@ def process_alignment_block(lines, start_idx, doc, alignment, return_elements=Fa
 # Header / footer / Word fields
 # ---------------------------------------------------------------------------
 
+
 def _add_field(paragraph, field_code):
     """Insert a Word field (PAGE, NUMPAGES, etc.) into a paragraph."""
-    for fld_type, text in [('begin', None), (None, field_code), ('end', None)]:
+    for fld_type, text in [("begin", None), (None, field_code), ("end", None)]:
         run = paragraph.add_run()
         if fld_type:
-            fld = OxmlElement('w:fldChar')
-            fld.set(qn('w:fldCharType'), fld_type)
+            fld = OxmlElement("w:fldChar")
+            fld.set(qn("w:fldCharType"), fld_type)
             run._r.append(fld)
         else:
-            elem = OxmlElement('w:instrText')
-            elem.set(qn('xml:space'), 'preserve')
-            elem.text = f' {text} '
+            elem = OxmlElement("w:instrText")
+            elem.set(qn("xml:space"), "preserve")
+            elem.text = f" {text} "
             run._r.append(elem)
 
 
-_PAGE_TOKEN_RE = re.compile(r'(\{page}|\{pages})')
+_PAGE_TOKEN_RE = re.compile(r"(\{page}|\{pages})")
 
 
-def set_header_footer(doc, text, kind='header'):
+def set_header_footer(doc, text, kind="header"):
     """Set document header or footer text.
 
     Iterates over **all** document sections.  For each section the default
@@ -503,7 +510,7 @@ def set_header_footer(doc, text, kind='header'):
         text: Content string.  Use ``{page}`` / ``{pages}`` for field tokens.
         kind: ``'header'`` or ``'footer'``.
     """
-    _TOKEN_MAP = {'{page}': 'PAGE', '{pages}': 'NUMPAGES'}
+    _TOKEN_MAP = {"{page}": "PAGE", "{pages}": "NUMPAGES"}
 
     def _fill_paragraph(p, content):
         """Clear existing runs/fields and write *content* into paragraph *p*."""
@@ -512,8 +519,8 @@ def set_header_footer(doc, text, kind='header'):
 
         # Remove all existing child run (<w:r>) and field elements
         for child in list(p._p):
-            tag = child.tag.split('}')[-1] if '}' in child.tag else child.tag
-            if tag in ('r', 'hyperlink', 'fldSimple'):
+            tag = child.tag.split("}")[-1] if "}" in child.tag else child.tag
+            if tag in ("r", "hyperlink", "fldSimple"):
                 p._p.remove(child)
 
         for part in _PAGE_TOKEN_RE.split(content):
@@ -540,15 +547,15 @@ def set_header_footer(doc, text, kind='header'):
 
         # First-page header / footer (when the template enables it)
         if section.different_first_page_header_footer:
-            first_kind = f'first_page_{kind}'
+            first_kind = f"first_page_{kind}"
             first_part = getattr(section, first_kind, None)
             if first_part is not None:
                 _update_part(first_part)
 
         # Even-page header / footer
-        even_kind = f'even_page_{kind}'
+        even_kind = f"even_page_{kind}"
         even_part = getattr(section, even_kind, None)
-        if even_part is not None and doc.settings.element.find(qn('w:evenAndOddHeaders')) is not None:
+        if even_part is not None and doc.settings.element.find(qn("w:evenAndOddHeaders")) is not None:
             _update_part(even_part)
 
 
@@ -556,55 +563,57 @@ def set_header_footer(doc, text, kind='header'):
 # Table of Contents
 # ---------------------------------------------------------------------------
 
+
 def add_toc(doc):
     """Insert a Table of Contents field.
 
     The TOC is based on Heading styles 1-3 and will update when the document
     is opened in Word.
     """
-    doc.add_heading('Table of Contents', level=1)
+    doc.add_heading("Table of Contents", level=1)
 
     p = doc.add_paragraph()
 
     # begin field
     run = p.add_run()
-    fld = OxmlElement('w:fldChar')
-    fld.set(qn('w:fldCharType'), 'begin')
+    fld = OxmlElement("w:fldChar")
+    fld.set(qn("w:fldCharType"), "begin")
     run._r.append(fld)
 
     # instruction
     run = p.add_run()
-    instr = OxmlElement('w:instrText')
-    instr.set(qn('xml:space'), 'preserve')
+    instr = OxmlElement("w:instrText")
+    instr.set(qn("xml:space"), "preserve")
     instr.text = ' TOC \\o "1-3" \\h \\z \\u '
     run._r.append(instr)
 
     # separate
     run = p.add_run()
-    fld = OxmlElement('w:fldChar')
-    fld.set(qn('w:fldCharType'), 'separate')
+    fld = OxmlElement("w:fldChar")
+    fld.set(qn("w:fldCharType"), "separate")
     run._r.append(fld)
 
     # placeholder text
-    p.add_run('[Table of Contents — open in Word and press F9 to update]')
+    p.add_run("[Table of Contents — open in Word and press F9 to update]")
 
     # end field
     run = p.add_run()
-    fld = OxmlElement('w:fldChar')
-    fld.set(qn('w:fldCharType'), 'end')
+    fld = OxmlElement("w:fldChar")
+    fld.set(qn("w:fldCharType"), "end")
     run._r.append(fld)
 
     doc.add_page_break()
 
     # Tell Word to update fields on open
-    uf = OxmlElement('w:updateFields')
-    uf.set(qn('w:val'), 'true')
+    uf = OxmlElement("w:updateFields")
+    uf.set(qn("w:val"), "true")
     doc.settings.element.append(uf)
 
 
 # ---------------------------------------------------------------------------
 # Generic block processor (used by dynamic template placeholder replacement)
 # ---------------------------------------------------------------------------
+
 
 def process_markdown_block(doc, lines, start_idx, return_element=True):
     """Process a single markdown block element and return created XML elements.
@@ -627,7 +636,7 @@ def process_markdown_block(doc, lines, start_idx, return_element=True):
         heading_match = HEADING_PATTERN.match(stripped)
         if heading_match:
             level = len(heading_match.group(1))
-            heading = doc.add_heading('', level=min(level, 6))
+            heading = doc.add_heading("", level=min(level, 6))
             parse_inline_formatting(heading_match.group(2), heading)
             _collect(heading._p)
             return start_idx + 1, elements
@@ -673,24 +682,18 @@ def process_markdown_block(doc, lines, start_idx, return_element=True):
                 return start_idx + 1, elements
             else:
                 # Multi-line block
-                idx, block_elems = process_alignment_block(
-                    lines, start_idx + 1, doc, alignment, return_elements=return_element
-                )
+                idx, block_elems = process_alignment_block(lines, start_idx + 1, doc, alignment, return_elements=return_element)
                 if return_element and block_elems:
                     elements.extend(block_elems)
                 return idx, elements
 
         # Ordered list
         if ORDERED_LIST_PATTERN.match(stripped):
-            return process_list_items(
-                lines, start_idx, doc, is_ordered=True, level=0, return_elements=return_element
-            )
+            return process_list_items(lines, start_idx, doc, is_ordered=True, level=0, return_elements=return_element)
 
         # Unordered list
         if UNORDERED_LIST_PATTERN.match(stripped):
-            return process_list_items(
-                lines, start_idx, doc, is_ordered=False, level=0, return_elements=return_element
-            )
+            return process_list_items(lines, start_idx, doc, is_ordered=False, level=0, return_elements=return_element)
 
         # Regular paragraph
         para = doc.add_paragraph()

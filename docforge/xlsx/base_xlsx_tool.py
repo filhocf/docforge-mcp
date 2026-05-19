@@ -15,7 +15,7 @@ from .helpers import (
 logger = logging.getLogger(__name__)
 
 # Pattern for multi-sheet heading: ## Sheet: Name
-SHEET_HEADING_PATTERN = re.compile(r'^##\s+Sheet:\s+(.+)$')
+SHEET_HEADING_PATTERN = re.compile(r"^##\s+Sheet:\s+(.+)$")
 
 DEFAULT_SHEET_NAME = "Data Report"
 
@@ -59,11 +59,11 @@ def _scan_table_positions(lines: List[str]) -> Dict[str, Dict[str, int]]:
             i += 1
             continue
 
-        if line.startswith('#'):
+        if line.startswith("#"):
             current_row += 2  # header + spacing
             i += 1
 
-        elif line.startswith('|'):
+        elif line.startswith("|"):
             table_data, i = parse_table(lines, i)
             if table_data:
                 table_key = f"T{table_counter}"
@@ -86,7 +86,7 @@ def markdown_to_excel(markdown_content: str, file_name: str | None = None) -> st
     logger.info("Starting markdown_to_excel conversion")
 
     # Split content into lines
-    lines: List[str] = markdown_content.split('\n')
+    lines: List[str] = markdown_content.split("\n")
 
     # ── Pass 1: discover all table positions across all sheets ──
     all_sheet_table_positions = _scan_table_positions(lines)
@@ -146,15 +146,16 @@ def markdown_to_excel(markdown_content: str, file_name: str | None = None) -> st
                 continue
 
             # Headers
-            if line.startswith('#'):
-                header_level = len(line) - len(line.lstrip('#'))
-                header_text = line.lstrip('#').strip()
+            if line.startswith("#"):
+                header_level = len(line) - len(line.lstrip("#"))
+                header_text = line.lstrip("#").strip()
 
                 cell = ws.cell(row=current_row, column=1)
                 cell.value = header_text
 
                 # Style headers based on level
                 from openpyxl.styles import Font  # local import to keep top clean
+
                 if header_level == 1:
                     cell.font = Font(size=16, bold=True, color="2F5597")
                 elif header_level == 2:
@@ -169,7 +170,7 @@ def markdown_to_excel(markdown_content: str, file_name: str | None = None) -> st
                 i += 1
 
             # Tables
-            elif line.startswith('|'):
+            elif line.startswith("|"):
                 table_data, i = parse_table(lines, i)
                 if table_data:
                     # Record this table's position
@@ -179,7 +180,10 @@ def markdown_to_excel(markdown_content: str, file_name: str | None = None) -> st
                     # Process the table
                     start_row_before = current_row
                     current_row = add_table_to_sheet(
-                        table_data, ws, current_row, table_positions,
+                        table_data,
+                        ws,
+                        current_row,
+                        table_positions,
                         all_sheet_table_positions=all_sheet_table_positions,
                     )
                     _row_count = current_row - start_row_before - 2  # subtract header and spacing

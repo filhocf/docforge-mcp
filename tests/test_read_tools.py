@@ -74,6 +74,7 @@ def sample_pptx(tmp_path):
 
 # === DOCX Tests ===
 
+
 class TestDocxReader:
     def test_read_docx(self, sample_docx):
         text = read_docx(sample_docx)
@@ -110,6 +111,7 @@ class TestDocxReader:
 
 # === XLSX Tests ===
 
+
 class TestXlsxReader:
     def test_read_xlsx(self, sample_xlsx):
         text = read_xlsx(sample_xlsx)
@@ -145,6 +147,7 @@ class TestXlsxReader:
 
 
 # === PPTX Tests ===
+
 
 class TestPptxReader:
     def test_read_pptx(self, sample_pptx):

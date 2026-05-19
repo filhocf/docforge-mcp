@@ -6,6 +6,7 @@ Updated assumptions:
   - The HTML file is resolved via custom_templates first, then default_templates
     (and corresponding /app/* paths in production)
 """
+
 from __future__ import annotations
 
 import io
@@ -29,12 +30,18 @@ __all__ = ["register_email_template_tools_from_yaml"]
 logger = logging.getLogger(__name__)
 
 TYPE_MAP = {
-    "string": str, "str": str,
-    "int": int, "integer": int,
+    "string": str,
+    "str": str,
+    "int": int,
+    "integer": int,
     "float": float,
-    "bool": bool, "boolean": bool,
-    "list": list[str], "list[str]": list[str], "list[string]": list[str],
-    "dict": dict, "object": dict,
+    "bool": bool,
+    "boolean": bool,
+    "list": list[str],
+    "list[str]": list[str],
+    "list[string]": list[str],
+    "dict": dict,
+    "object": dict,
 }
 
 BASE_FIELDS: Dict[str, Any] = {
@@ -125,9 +132,7 @@ def register_email_template_tools_from_yaml(mcp: FastMCP, yaml_path: Path) -> No
 
                         if "promo_code" in safe_payload and "promo_code_block" not in safe_payload:
                             promo_val = safe_payload.get("promo_code")
-                            safe_payload["promo_code_block"] = (
-                                f"<div class=\"promo\">Use promo code <strong>{promo_val}</strong>.</div>" if promo_val else ""
-                            )
+                            safe_payload["promo_code_block"] = f'<div class="promo">Use promo code <strong>{promo_val}</strong>.</div>' if promo_val else ""
                         try:
                             html_rendered = _renderer.render(_html, safe_payload)
                         except Exception as e:  # pragma: no cover
@@ -135,12 +140,12 @@ def register_email_template_tools_from_yaml(mcp: FastMCP, yaml_path: Path) -> No
                             raise ToolError(f"Error rendering template {_name}: {e}")
 
                         # Mirror static create_eml: single HTML body base64 encoded.
-                        msg = MIMEText(html_rendered, 'html', 'utf-8')
+                        msg = MIMEText(html_rendered, "html", "utf-8")
                         encoders.encode_base64(msg)  # sets proper Content-Transfer-Encoding and encodes payload
 
                         subject = str(safe_payload.get("subject", ""))
                         if subject:
-                            msg['Subject'] = subject
+                            msg["Subject"] = subject
                         for hdr in ("To", "Cc", "Bcc"):
                             key = hdr.lower()
                             val = safe_payload.get(key)
@@ -148,7 +153,7 @@ def register_email_template_tools_from_yaml(mcp: FastMCP, yaml_path: Path) -> No
                                 msg[hdr] = ", ".join(val)
                             elif isinstance(val, str) and val:
                                 msg[hdr] = val
-                        msg['X-Unsent'] = '1'
+                        msg["X-Unsent"] = "1"
 
                         buffer = io.BytesIO()
                         try:
@@ -167,8 +172,8 @@ def register_email_template_tools_from_yaml(mcp: FastMCP, yaml_path: Path) -> No
                         logger.error(f"[dynamic-email] Unexpected error in tool '{_name}': {e}", exc_info=True)
                         raise ToolError(f"Error generating email from template '{_name}': {e}")
 
-                tool_impl.__annotations__['data'] = _model  # type: ignore[index]
-                tool_impl.__annotations__['return'] = str  # type: ignore[index]
+                tool_impl.__annotations__["data"] = _model  # type: ignore[index]
+                tool_impl.__annotations__["return"] = str  # type: ignore[index]
                 return tool_impl
 
             mcp.tool(name=name, description=description, annotations=annotations, meta=meta)(make_tool_fn())

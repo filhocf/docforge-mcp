@@ -41,9 +41,7 @@ def setup_output_dir():
     yield
 
 
-def create_word_document(markdown_content: str, title=None, author=None,
-                         subject=None, header_text=None, footer_text=None,
-                         include_toc=False) -> Document:
+def create_word_document(markdown_content: str, title=None, author=None, subject=None, header_text=None, footer_text=None, include_toc=False) -> Document:
     """Convert Markdown to Word document and return the Document object.
 
     This is a test-friendly version that returns the Document directly
@@ -70,11 +68,11 @@ def create_word_document(markdown_content: str, title=None, author=None,
 
     # Set header and footer
     if header_text:
-        set_header_footer(doc, header_text, 'header')
+        set_header_footer(doc, header_text, "header")
     if footer_text:
-        set_header_footer(doc, footer_text, 'footer')
+        set_header_footer(doc, footer_text, "footer")
 
-    lines = markdown_content.split('\n')
+    lines = markdown_content.split("\n")
     i = 0
 
     while i < len(lines):
@@ -85,7 +83,7 @@ def create_word_document(markdown_content: str, title=None, author=None,
             continue
 
         # Check if this line ends with two spaces (line break)
-        if line.endswith('  '):
+        if line.endswith("  "):
             paragraph_lines = []
             while i < len(lines):
                 current_line = lines[i]
@@ -93,21 +91,21 @@ def create_word_document(markdown_content: str, title=None, author=None,
                     break
                 paragraph_lines.append(current_line)
                 i += 1
-                if not current_line.endswith('  '):
+                if not current_line.endswith("  "):
                     break
 
-            full_text = '  \n'.join(paragraph_lines)
+            full_text = "  \n".join(paragraph_lines)
             first_line = paragraph_lines[0].strip()
 
-            if first_line.startswith('#'):
-                header_level = len(first_line) - len(first_line.lstrip('#'))
-                header_text_val = first_line.lstrip('#').strip()
-                heading = doc.add_heading('', level=min(header_level, 6))
+            if first_line.startswith("#"):
+                header_level = len(first_line) - len(first_line.lstrip("#"))
+                header_text_val = first_line.lstrip("#").strip()
+                heading = doc.add_heading("", level=min(header_level, 6))
                 parse_inline_formatting(header_text_val, heading)
-            elif first_line.startswith('>'):
+            elif first_line.startswith(">"):
                 quote_text = full_text[1:].strip()
                 quote_paragraph = doc.add_paragraph()
-                quote_paragraph.style = 'Quote'
+                quote_paragraph.style = "Quote"
                 parse_inline_formatting(quote_text, quote_paragraph)
             else:
                 paragraph = doc.add_paragraph()
@@ -116,22 +114,22 @@ def create_word_document(markdown_content: str, title=None, author=None,
 
         line = line.strip()
 
-        if line.startswith('#'):
-            header_level = len(line) - len(line.lstrip('#'))
-            header_text_val = line.lstrip('#').strip()
-            heading = doc.add_heading('', level=min(header_level, 6))
+        if line.startswith("#"):
+            header_level = len(line) - len(line.lstrip("#"))
+            header_text_val = line.lstrip("#").strip()
+            heading = doc.add_heading("", level=min(header_level, 6))
             parse_inline_formatting(header_text_val, heading)
             i += 1
 
-        elif line.startswith('|'):
+        elif line.startswith("|"):
             table_data, i = parse_table(lines, i)
             if table_data:
                 add_table_to_doc(table_data, doc)
 
-        elif re.match(r'^\d+\.\s+', line):
+        elif re.match(r"^\d+\.\s+", line):
             i, _ = process_list_items(lines, i, doc, True, 0)
 
-        elif re.match(r'^[-*+]\s+', line):
+        elif re.match(r"^[-*+]\s+", line):
             i, _ = process_list_items(lines, i, doc, False, 0)
 
         elif PAGE_BREAK_PATTERN.match(line):
@@ -142,7 +140,7 @@ def create_word_document(markdown_content: str, title=None, author=None,
             add_horizontal_line(doc)
             i += 1
 
-        elif (img_match := IMAGE_PATTERN.match(line)):
+        elif img_match := IMAGE_PATTERN.match(line):
             alt_text, url = img_match.groups()
             add_image_to_doc(doc, url, alt_text)
             i += 1
@@ -157,10 +155,10 @@ def create_word_document(markdown_content: str, title=None, author=None,
             else:
                 i, _ = process_alignment_block(lines, i + 1, doc, alignment, return_elements=False)
 
-        elif line.startswith('>'):
+        elif line.startswith(">"):
             quote_text = line[1:].strip()
             quote_paragraph = doc.add_paragraph()
-            quote_paragraph.style = 'Quote'
+            quote_paragraph.style = "Quote"
             parse_inline_formatting(quote_text, quote_paragraph)
             i += 1
 
@@ -192,6 +190,7 @@ def save_test_document(markdown: str, filename: str) -> Document:
 # =============================================================================
 # Header Tests
 # =============================================================================
+
 
 class TestHeaders:
     """Tests for markdown headers conversion."""
@@ -243,6 +242,7 @@ Final thoughts.
 # =============================================================================
 # List Tests
 # =============================================================================
+
 
 class TestLists:
     """Tests for markdown list conversion."""
@@ -308,6 +308,7 @@ class TestLists:
 # Table Tests
 # =============================================================================
 
+
 class TestTables:
     """Tests for markdown table conversion."""
 
@@ -346,6 +347,7 @@ class TestTables:
 # =============================================================================
 # Inline Formatting Tests
 # =============================================================================
+
 
 class TestInlineFormatting:
     """Tests for inline markdown formatting."""
@@ -397,6 +399,7 @@ class TestInlineFormatting:
 # Block Quote Tests
 # =============================================================================
 
+
 class TestBlockQuotes:
     """Tests for block quote conversion."""
 
@@ -416,6 +419,7 @@ class TestBlockQuotes:
 # =============================================================================
 # Complex Document Tests
 # =============================================================================
+
 
 class TestComplexDocuments:
     """Tests for complex documents combining multiple elements."""
@@ -522,6 +526,7 @@ Creates a new user.
 # Edge Cases
 # =============================================================================
 
+
 class TestEdgeCases:
     """Tests for edge cases and special scenarios."""
 
@@ -587,6 +592,7 @@ This is line three.
 # Regression Tests for helpers.py changes
 # =============================================================================
 
+
 class TestHelpersRegression:
     """Regression tests for helpers.py functionality used by base tool."""
 
@@ -630,7 +636,7 @@ class TestHelpersRegression:
         para = doc.add_paragraph()
         parse_inline_formatting("Visit [link](https://example.com)", para)
         # Check that hyperlink element exists
-        hyperlinks = para._p.findall('.//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}hyperlink')
+        hyperlinks = para._p.findall(".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}hyperlink")
         assert len(hyperlinks) > 0
 
     def test_parse_inline_formatting_nested(self):
@@ -656,6 +662,7 @@ class TestHelpersRegression:
 # =============================================================================
 # Comprehensive Visual Test
 # =============================================================================
+
 
 class TestVisualInspection:
     """Comprehensive test for manual visual inspection of generated documents.
@@ -738,7 +745,8 @@ class TestVisualInspection:
             "\n"
             "These should appear as literal characters, not formatting:\n"
             "\n"
-            r"\*not italic\* and \**not bold\** and \`not code\`." "\n"
+            r"\*not italic\* and \**not bold\** and \`not code\`."
+            "\n"
             "\n"
             "***\n"
             "\n"
@@ -1029,15 +1037,14 @@ class TestVisualInspection:
         assert "Main step 3" in full_text, "Ordered list content"
 
         # ----- Heading levels -----
-        headings = [(p.style.name, p.text) for p in doc.paragraphs
-                    if p.style.name.startswith('Heading')]
+        headings = [(p.style.name, p.text) for p in doc.paragraphs if p.style.name.startswith("Heading")]
         heading_levels = set(h[0] for h in headings)
-        assert 'Heading 1' in heading_levels, "Should have H1 headings"
-        assert 'Heading 2' in heading_levels, "Should have H2 headings"
-        assert 'Heading 3' in heading_levels, "Should have H3 headings"
-        assert 'Heading 4' in heading_levels, "Should have H4 headings"
-        assert 'Heading 5' in heading_levels, "Should have H5 headings"
-        assert 'Heading 6' in heading_levels, "Should have H6 headings"
+        assert "Heading 1" in heading_levels, "Should have H1 headings"
+        assert "Heading 2" in heading_levels, "Should have H2 headings"
+        assert "Heading 3" in heading_levels, "Should have H3 headings"
+        assert "Heading 4" in heading_levels, "Should have H4 headings"
+        assert "Heading 5" in heading_levels, "Should have H5 headings"
+        assert "Heading 6" in heading_levels, "Should have H6 headings"
 
         # ----- Inline formatting runs -----
         all_runs = [r for p in doc.paragraphs for r in p.runs]
@@ -1045,68 +1052,56 @@ class TestVisualInspection:
         # Bold-only runs
         bold_only_runs = [r for r in all_runs if r.bold and not r.italic]
         assert len(bold_only_runs) > 0, "Should have bold-only runs"
-        assert any("bold text" in r.text for r in bold_only_runs), \
-            "Bold-only runs should contain 'bold text'"
+        assert any("bold text" in r.text for r in bold_only_runs), "Bold-only runs should contain 'bold text'"
 
         # Italic-only runs
         italic_only_runs = [r for r in all_runs if r.italic and not r.bold]
         assert len(italic_only_runs) > 0, "Should have italic-only runs"
-        assert any("italic text" in r.text for r in italic_only_runs), \
-            "Italic-only runs should contain 'italic text'"
+        assert any("italic text" in r.text for r in italic_only_runs), "Italic-only runs should contain 'italic text'"
 
         # Strikethrough runs
         strike_runs = [r for r in all_runs if r.font.strike]
         assert len(strike_runs) > 0, "Should have strikethrough runs"
-        assert any("strikethrough" in r.text or "deleted" in r.text or "Removed" in r.text
-                    for r in strike_runs), "Strikethrough should contain expected text"
+        assert any("strikethrough" in r.text or "deleted" in r.text or "Removed" in r.text for r in strike_runs), "Strikethrough should contain expected text"
 
         # Underline runs
         underline_runs = [r for r in all_runs if r.font.underline]
         assert len(underline_runs) > 0, "Should have underline runs"
-        assert any("underlined" in r.text or "added" in r.text or "underline" in r.text.lower()
-                    for r in underline_runs), "Underline should contain expected text"
+        assert any("underlined" in r.text or "added" in r.text or "underline" in r.text.lower() for r in underline_runs), "Underline should contain expected text"
 
         # Bold+italic runs (from ***bold italic text***)
         bold_italic_runs = [r for r in all_runs if r.bold and r.italic]
         assert len(bold_italic_runs) > 0, "Should have bold+italic runs"
-        assert any("bold italic" in r.text for r in bold_italic_runs), \
-            "bold+italic runs should contain 'bold italic' text"
+        assert any("bold italic" in r.text for r in bold_italic_runs), "bold+italic runs should contain 'bold italic' text"
 
         # Nested formatting: bold containing italic (**bold with *nested italic* inside**)
-        nested_italic_in_bold = [r for r in all_runs if r.bold and r.italic
-                                 and "nested italic" in r.text]
-        assert len(nested_italic_in_bold) > 0, \
-            "Should have bold+italic run from nested **bold with *italic* inside**"
+        nested_italic_in_bold = [r for r in all_runs if r.bold and r.italic and "nested italic" in r.text]
+        assert len(nested_italic_in_bold) > 0, "Should have bold+italic run from nested **bold with *italic* inside**"
 
         # Nested formatting: italic containing bold (*italic with **nested bold** inside*)
         # This should produce italic-only runs and bold+italic runs
         nested_bi_runs = [r for r in all_runs if r.bold and r.italic and "nested bold" in r.text]
-        assert len(nested_bi_runs) > 0, \
-            "Should have bold+italic run from nested *italic with **bold** inside*"
+        assert len(nested_bi_runs) > 0, "Should have bold+italic run from nested *italic with **bold** inside*"
 
         # Bold + strikethrough (from **~~bold strikethrough~~**)
         bold_strike_runs = [r for r in all_runs if r.bold and r.font.strike]
         assert len(bold_strike_runs) > 0, "Should have bold+strikethrough runs"
-        assert any("bold strikethrough" in r.text for r in bold_strike_runs), \
-            "Bold+strikethrough run should contain 'bold strikethrough'"
+        assert any("bold strikethrough" in r.text for r in bold_strike_runs), "Bold+strikethrough run should contain 'bold strikethrough'"
 
         # Bold + underline (from **__bold underline__**)
         bold_underline_runs = [r for r in all_runs if r.bold and r.font.underline]
         assert len(bold_underline_runs) > 0, "Should have bold+underline runs"
-        assert any("bold underline" in r.text for r in bold_underline_runs), \
-            "Bold+underline run should contain 'bold underline'"
+        assert any("bold underline" in r.text for r in bold_underline_runs), "Bold+underline run should contain 'bold underline'"
 
         # Italic + strikethrough (from *~~italic strikethrough~~*)
         italic_strike_runs = [r for r in all_runs if r.italic and r.font.strike]
         assert len(italic_strike_runs) > 0, "Should have italic+strikethrough runs"
-        assert any("italic strikethrough" in r.text for r in italic_strike_runs), \
-            "Italic+strikethrough run should contain 'italic strikethrough'"
+        assert any("italic strikethrough" in r.text for r in italic_strike_runs), "Italic+strikethrough run should contain 'italic strikethrough'"
 
         # Italic + underline (from *__italic underline__*)
         italic_underline_runs = [r for r in all_runs if r.italic and r.font.underline]
         assert len(italic_underline_runs) > 0, "Should have italic+underline runs"
-        assert any("italic underline" in r.text for r in italic_underline_runs), \
-            "Italic+underline run should contain 'italic underline'"
+        assert any("italic underline" in r.text for r in italic_underline_runs), "Italic+underline run should contain 'italic underline'"
 
         # Code runs (inline code with Courier New font)
         code_runs = [r for r in all_runs if r.font.name == "Courier New"]
@@ -1114,56 +1109,40 @@ class TestVisualInspection:
         code_texts = [r.text for r in code_runs]
         assert any("print()" in t for t in code_texts), "Code runs should contain 'print()'"
         assert any("variable_name" in t for t in code_texts), "Code runs should contain 'variable_name'"
-        assert any("inline code" == t or "code" in t.lower() for t in code_texts), \
-            "Code runs should contain code-related text"
+        assert any("inline code" == t or "code" in t.lower() for t in code_texts), "Code runs should contain code-related text"
 
         # ----- Text alignment -----
-        centered = [p for p in doc.paragraphs
-                    if p.alignment == WD_ALIGN_PARAGRAPH.CENTER and p.text.strip()]
+        centered = [p for p in doc.paragraphs if p.alignment == WD_ALIGN_PARAGRAPH.CENTER and p.text.strip()]
         assert len(centered) > 0, "Should have centered paragraphs"
-        assert any("centered" in p.text.lower() for p in centered), \
-            "Centered paragraphs should contain expected text"
+        assert any("centered" in p.text.lower() for p in centered), "Centered paragraphs should contain expected text"
         # Multi-line center block should produce multiple centered paragraphs
         # (inline centered + Company Name + 123 Main Street + City)
-        assert len(centered) >= 4, \
-            "Should have >=4 centered paragraphs (inline + multi-line block)"
+        assert len(centered) >= 4, "Should have >=4 centered paragraphs (inline + multi-line block)"
 
-        right_aligned = [p for p in doc.paragraphs
-                         if p.alignment == WD_ALIGN_PARAGRAPH.RIGHT and p.text.strip()]
+        right_aligned = [p for p in doc.paragraphs if p.alignment == WD_ALIGN_PARAGRAPH.RIGHT and p.text.strip()]
         assert len(right_aligned) > 0, "Should have right-aligned paragraphs"
-        assert any("right-aligned" in p.text.lower() for p in right_aligned), \
-            "Right-aligned paragraphs should contain expected text"
+        assert any("right-aligned" in p.text.lower() for p in right_aligned), "Right-aligned paragraphs should contain expected text"
         # Multi-line right block: inline + Date + Reference = >=3
-        assert len(right_aligned) >= 3, \
-            "Should have >=3 right-aligned paragraphs (inline + multi-line block)"
+        assert len(right_aligned) >= 3, "Should have >=3 right-aligned paragraphs (inline + multi-line block)"
 
-        justified = [p for p in doc.paragraphs
-                     if p.alignment == WD_ALIGN_PARAGRAPH.JUSTIFY and p.text.strip()]
+        justified = [p for p in doc.paragraphs if p.alignment == WD_ALIGN_PARAGRAPH.JUSTIFY and p.text.strip()]
         assert len(justified) > 0, "Should have justified paragraphs"
-        assert any("justified" in p.text.lower() or "lorem ipsum" in p.text.lower()
-                    for p in justified), "Justified paragraph should contain expected text"
+        assert any("justified" in p.text.lower() or "lorem ipsum" in p.text.lower() for p in justified), "Justified paragraph should contain expected text"
 
-        left_aligned = [p for p in doc.paragraphs
-                        if p.alignment == WD_ALIGN_PARAGRAPH.LEFT and p.text.strip()]
+        left_aligned = [p for p in doc.paragraphs if p.alignment == WD_ALIGN_PARAGRAPH.LEFT and p.text.strip()]
         assert len(left_aligned) > 0, "Should have explicit left-aligned paragraphs"
-        assert any("left-aligned" in p.text.lower() for p in left_aligned), \
-            "Left-aligned paragraph should contain expected text"
+        assert any("left-aligned" in p.text.lower() for p in left_aligned), "Left-aligned paragraph should contain expected text"
 
         # ----- Block quotes -----
-        quote_paragraphs = [p for p in doc.paragraphs if p.style.name == 'Quote']
-        assert len(quote_paragraphs) >= 4, \
-            "Should have at least 4 block quote paragraphs"
+        quote_paragraphs = [p for p in doc.paragraphs if p.style.name == "Quote"]
+        assert len(quote_paragraphs) >= 4, "Should have at least 4 block quote paragraphs"
         quote_texts = [p.text for p in quote_paragraphs]
-        assert any("simple block quote" in t for t in quote_texts), \
-            "Block quotes should include simple quote"
-        assert any("bold" in t and "italic" in t for t in quote_texts), \
-            "Block quotes should include formatted quote"
-        assert any("Peter Drucker" in t for t in quote_texts), \
-            "Block quotes should include attribution quote"
+        assert any("simple block quote" in t for t in quote_texts), "Block quotes should include simple quote"
+        assert any("bold" in t and "italic" in t for t in quote_texts), "Block quotes should include formatted quote"
+        assert any("Peter Drucker" in t for t in quote_texts), "Block quotes should include attribution quote"
 
         # Block quote with formatting runs
-        quote_runs = [r for p in doc.paragraphs if p.style.name == 'Quote'
-                      for r in p.runs]
+        quote_runs = [r for p in doc.paragraphs if p.style.name == "Quote" for r in p.runs]
         quote_bold = [r for r in quote_runs if r.bold]
         assert len(quote_bold) > 0, "Block quotes should have bold runs"
         quote_italic = [r for r in quote_runs if r.italic]
@@ -1174,27 +1153,20 @@ class TestVisualInspection:
         assert len(quote_underline) > 0, "Block quotes should have underline runs"
 
         # ----- Lists (verify styles) -----
-        bullet_paras = [p for p in doc.paragraphs
-                        if p.style.name.startswith('List Bullet')]
-        assert len(bullet_paras) >= 6, \
-            f"Should have >=6 bullet list paragraphs, got {len(bullet_paras)}"
+        bullet_paras = [p for p in doc.paragraphs if p.style.name.startswith("List Bullet")]
+        assert len(bullet_paras) >= 6, f"Should have >=6 bullet list paragraphs, got {len(bullet_paras)}"
         # Nested bullets should use List Bullet 2 or 3
-        nested_bullets = [p for p in bullet_paras if p.style.name != 'List Bullet']
+        nested_bullets = [p for p in bullet_paras if p.style.name != "List Bullet"]
         assert len(nested_bullets) > 0, "Should have nested bullet list paragraphs"
 
-        number_paras = [p for p in doc.paragraphs
-                        if p.style.name.startswith('List Number')]
-        assert len(number_paras) >= 4, \
-            f"Should have >=4 numbered list paragraphs, got {len(number_paras)}"
+        number_paras = [p for p in doc.paragraphs if p.style.name.startswith("List Number")]
+        assert len(number_paras) >= 4, f"Should have >=4 numbered list paragraphs, got {len(number_paras)}"
         # Nested numbers should use List Number 2 or 3
-        nested_numbers = [p for p in number_paras if p.style.name != 'List Number']
+        nested_numbers = [p for p in number_paras if p.style.name != "List Number"]
         assert len(nested_numbers) > 0, "Should have nested numbered list paragraphs"
 
         # List items with formatting
-        list_runs = [r for p in doc.paragraphs
-                     if p.style.name.startswith('List Bullet') or
-                     p.style.name.startswith('List Number')
-                     for r in p.runs]
+        list_runs = [r for p in doc.paragraphs if p.style.name.startswith("List Bullet") or p.style.name.startswith("List Number") for r in p.runs]
         list_bold = [r for r in list_runs if r.bold]
         assert len(list_bold) > 0, "List items should have bold runs"
         list_italic = [r for r in list_runs if r.italic]
@@ -1223,9 +1195,7 @@ class TestVisualInspection:
         assert "Left Aligned" in table_text or "L1" in table_text, "Alignment table"
 
         # Table cells should have inline formatting (bold, italic, code, strikethrough, underline)
-        table_runs = [r for table in doc.tables
-                      for row in table.rows for cell in row.cells
-                      for p in cell.paragraphs for r in p.runs]
+        table_runs = [r for table in doc.tables for row in table.rows for cell in row.cells for p in cell.paragraphs for r in p.runs]
         table_bold = [r for r in table_runs if r.bold]
         assert len(table_bold) > 0, "Table cells should have bold formatting"
         table_italic = [r for r in table_runs if r.italic]
@@ -1238,36 +1208,31 @@ class TestVisualInspection:
         assert len(table_underline) > 0, "Table cells should have underline formatting"
 
         # Table hyperlinks
-        table_xml = "".join(
-            table._tbl.xml for table in doc.tables
-        )
-        assert 'w:hyperlink' in table_xml, "Table should have hyperlinks"
+        table_xml = "".join(table._tbl.xml for table in doc.tables)
+        assert "w:hyperlink" in table_xml, "Table should have hyperlinks"
 
         # ----- Page break (---) in XML -----
         xml = doc.element.xml
-        assert 'w:br' in xml or 'type="page"' in xml, "Should have page break"
+        assert "w:br" in xml or 'type="page"' in xml, "Should have page break"
 
         # ----- Horizontal line (***) as w:pBdr -----
-        assert 'w:pBdr' in xml, "Should have horizontal line borders"
+        assert "w:pBdr" in xml, "Should have horizontal line borders"
         # Multiple horizontal lines (***) used as section separators
-        pBdr_count = xml.count('w:pBdr')
+        pBdr_count = xml.count("w:pBdr")
         assert pBdr_count >= 2, f"Should have multiple horizontal lines, got {pBdr_count}"
 
         # ----- Image error placeholder (invalid URL) -----
         assert "Image could not be loaded" in full_text, "Should have image error placeholder"
-        assert "invalid-test-domain.test" in full_text, \
-            "Image error should include the URL"
+        assert "invalid-test-domain.test" in full_text, "Image error should include the URL"
 
         # ----- Line breaks (two trailing spaces -> w:br) -----
         # The "Line Breaks" section uses trailing spaces to produce soft breaks
-        line_break_count = xml.count('<w:br/>')
-        assert line_break_count >= 2, \
-            f"Should have >=2 soft line breaks from trailing double-spaces, got {line_break_count}"
+        line_break_count = xml.count("<w:br/>")
+        assert line_break_count >= 2, f"Should have >=2 soft line breaks from trailing double-spaces, got {line_break_count}"
 
         # ----- Hyperlinks -----
-        hyperlink_count = xml.count('w:hyperlink')
-        assert hyperlink_count >= 4, \
-            f"Should have at least 4 hyperlinks (example, google, docs, privacy), got {hyperlink_count}"
+        hyperlink_count = xml.count("w:hyperlink")
+        assert hyperlink_count >= 4, f"Should have at least 4 hyperlinks (example, google, docs, privacy), got {hyperlink_count}"
 
         # ----- Escaped characters (should NOT have formatting) -----
         # The escaped line should render as literal text with *, **, `
@@ -1351,8 +1316,8 @@ and document properties (title, author, subject) in Word.
 
         # Verify TOC field exists
         xml = doc.element.xml
-        assert 'TOC' in xml, "Should have TOC field"
-        assert 'updateFields' in doc.settings.element.xml, "Should have updateFields setting"
+        assert "TOC" in xml, "Should have TOC field"
+        assert "updateFields" in doc.settings.element.xml, "Should have updateFields setting"
 
         # Verify header
         header = doc.sections[0].header
@@ -1362,8 +1327,8 @@ and document properties (title, author, subject) in Word.
         # Verify footer with page fields
         footer = doc.sections[0].footer
         footer_xml = footer._element.xml
-        assert 'PAGE' in footer_xml, "Footer should contain PAGE field"
-        assert 'NUMPAGES' in footer_xml, "Footer should contain NUMPAGES field"
+        assert "PAGE" in footer_xml, "Footer should contain PAGE field"
+        assert "NUMPAGES" in footer_xml, "Footer should contain NUMPAGES field"
 
         # Verify content
         full_text = "\n".join([p.text for p in doc.paragraphs])
@@ -1381,6 +1346,7 @@ if __name__ == "__main__":
 # Page Break Tests (Feature 1)
 # =============================================================================
 
+
 class TestPageBreaks:
     """Tests for page break (---) conversion."""
 
@@ -1389,7 +1355,7 @@ class TestPageBreaks:
         markdown = "First page content\n\n---\n\nSecond page content"
         doc = save_test_document(markdown, "page_break_basic.docx")
         xml = doc.element.xml
-        assert 'w:br' in xml or 'lastRenderedPageBreak' in xml or 'type="page"' in xml
+        assert "w:br" in xml or "lastRenderedPageBreak" in xml or 'type="page"' in xml
 
     def test_multiple_page_breaks(self):
         """Test multiple page breaks in a document."""
@@ -1408,6 +1374,7 @@ class TestPageBreaks:
 # Horizontal Line Tests (Feature 1)
 # =============================================================================
 
+
 class TestHorizontalLines:
     """Tests for horizontal line (***) conversion."""
 
@@ -1416,8 +1383,8 @@ class TestHorizontalLines:
         markdown = "Text above\n\n***\n\nText below"
         doc = save_test_document(markdown, "hline_basic.docx")
         xml = doc.element.xml
-        assert 'w:pBdr' in xml
-        assert 'w:bottom' in xml
+        assert "w:pBdr" in xml
+        assert "w:bottom" in xml
 
     def test_multiple_horizontal_lines(self):
         """Test multiple horizontal lines."""
@@ -1429,6 +1396,7 @@ class TestHorizontalLines:
 # =============================================================================
 # Image Tests (Feature 2)
 # =============================================================================
+
 
 class TestImages:
     """Tests for image (![alt](url)) conversion."""
@@ -1452,6 +1420,7 @@ class TestImages:
 # =============================================================================
 # Text Alignment Tests (Feature 3)
 # =============================================================================
+
 
 class TestTextAlignment:
     """Tests for text alignment via HTML tags."""
@@ -1494,24 +1463,21 @@ class TestTextAlignment:
         """Test multi-line <center> block."""
         markdown = "<center>\nCompany Name\nStreet Address\nCity, Country\n</center>"
         doc = save_test_document(markdown, "align_multiline_center.docx")
-        centered_paragraphs = [p for p in doc.paragraphs
-                               if p.alignment == WD_ALIGN_PARAGRAPH.CENTER
-                               and p.text.strip()]
+        centered_paragraphs = [p for p in doc.paragraphs if p.alignment == WD_ALIGN_PARAGRAPH.CENTER and p.text.strip()]
         assert len(centered_paragraphs) >= 3
 
     def test_multiline_div_right_block(self):
         """Test multi-line <div align="right"> block."""
         markdown = '<div align="right">\nDate: 2026-02-20\nRef: ABC-123\n</div>'
         doc = save_test_document(markdown, "align_multiline_right.docx")
-        right_paragraphs = [p for p in doc.paragraphs
-                            if p.alignment == WD_ALIGN_PARAGRAPH.RIGHT
-                            and p.text.strip()]
+        right_paragraphs = [p for p in doc.paragraphs if p.alignment == WD_ALIGN_PARAGRAPH.RIGHT and p.text.strip()]
         assert len(right_paragraphs) >= 2
 
 
 # =============================================================================
 # Document Metadata Tests (Feature 5)
 # =============================================================================
+
 
 class TestDocumentMetadata:
     """Tests for document metadata (title, author, subject)."""
@@ -1533,12 +1499,7 @@ class TestDocumentMetadata:
 
     def test_metadata_all_fields(self):
         """Test that all metadata fields are set together."""
-        doc = create_word_document(
-            "# Report",
-            title="Annual Report",
-            author="Jane Smith",
-            subject="Financial Overview"
-        )
+        doc = create_word_document("# Report", title="Annual Report", author="Jane Smith", subject="Financial Overview")
         assert doc.core_properties.title == "Annual Report"
         assert doc.core_properties.author == "Jane Smith"
         assert doc.core_properties.subject == "Financial Overview"
@@ -1553,6 +1514,7 @@ class TestDocumentMetadata:
 # =============================================================================
 # Header/Footer Tests (Feature 6)
 # =============================================================================
+
 
 class TestHeadersFooters:
     """Tests for document headers and footers with page numbers."""
@@ -1576,16 +1538,12 @@ class TestHeadersFooters:
         doc = create_word_document("# Test", footer_text="Page {page} of {pages}")
         footer = doc.sections[0].footer
         xml = footer._element.xml
-        assert 'PAGE' in xml
-        assert 'NUMPAGES' in xml
+        assert "PAGE" in xml
+        assert "NUMPAGES" in xml
 
     def test_header_and_footer_together(self):
         """Test both header and footer set simultaneously."""
-        doc = create_word_document(
-            "# Test",
-            header_text="Header Text",
-            footer_text="Footer Text"
-        )
+        doc = create_word_document("# Test", header_text="Header Text", footer_text="Footer Text")
         header_text = "\n".join([p.text for p in doc.sections[0].header.paragraphs])
         footer_text = "\n".join([p.text for p in doc.sections[0].footer.paragraphs])
         assert "Header Text" in header_text
@@ -1602,18 +1560,16 @@ class TestHeadersFooters:
 # Table of Contents Tests (Feature 7)
 # =============================================================================
 
+
 class TestTableOfContents:
     """Tests for Table of Contents insertion."""
 
     def test_toc_field_exists(self):
         """Test that TOC field elements are present in document XML."""
-        doc = create_word_document(
-            "# Chapter 1\n\nContent\n\n## Section 1.1\n\nMore content",
-            include_toc=True
-        )
+        doc = create_word_document("# Chapter 1\n\nContent\n\n## Section 1.1\n\nMore content", include_toc=True)
         xml = doc.element.xml
-        assert 'TOC' in xml
-        assert 'fldChar' in xml or 'fldSimple' in xml
+        assert "TOC" in xml
+        assert "fldChar" in xml or "fldSimple" in xml
 
     def test_toc_heading_exists(self):
         """Test that 'Table of Contents' heading is added."""
@@ -1625,20 +1581,18 @@ class TestTableOfContents:
         """Test that updateFields setting is added to document."""
         doc = create_word_document("# Test", include_toc=True)
         xml = doc.settings.element.xml
-        assert 'updateFields' in xml
+        assert "updateFields" in xml
 
     def test_toc_saved_document(self):
         """Test that TOC document saves correctly."""
-        doc = save_test_document(
-            "# Chapter 1\n\nIntro\n\n## Section 1.1\n\nDetails\n\n# Chapter 2\n\nConclusion",
-            "toc_document.docx"
-        )
+        doc = save_test_document("# Chapter 1\n\nIntro\n\n## Section 1.1\n\nDetails\n\n# Chapter 2\n\nConclusion", "toc_document.docx")
         assert doc is not None
 
 
 # =============================================================================
 # Underline and Strikethrough Tests (Feature 8)
 # =============================================================================
+
 
 class TestUnderlineStrikethrough:
     """Tests for ~~strikethrough~~ and __underline__ formatting."""
@@ -1690,5 +1644,3 @@ class TestUnderlineStrikethrough:
         markdown = "This has __underlined text__ in it."
         doc = save_test_document(markdown, "format_underline.docx")
         assert doc is not None
-
-

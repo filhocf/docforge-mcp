@@ -23,14 +23,14 @@ def _create_workbook_from_markdown(markdown_content: str) -> Workbook:
     captured = {}
 
     def fake_upload(file_obj, suffix, **kwargs):
-        captured['data'] = file_obj.read()
+        captured["data"] = file_obj.read()
         file_obj.seek(0)
         return "https://fake-url/test.xlsx"
 
     with patch("docforge.xlsx.base_xlsx_tool.upload_file", side_effect=fake_upload):
         markdown_to_excel(markdown_content)
 
-    wb = load_workbook(io.BytesIO(captured['data']))
+    wb = load_workbook(io.BytesIO(captured["data"]))
     return wb
 
 
@@ -321,50 +321,44 @@ class TestAdjustFormulaReferencesUnit:
 
     def test_cross_sheet_single_cell(self):
         from docforge.xlsx.helpers import adjust_formula_references
+
         all_positions = {"Revenue": {"T1": 1}}
-        result = adjust_formula_references(
-            "=Revenue!T1.B[0]", 10, {}, all_positions
-        )
+        result = adjust_formula_references("=Revenue!T1.B[0]", 10, {}, all_positions)
         assert result == "=Revenue!B2"
 
     def test_cross_sheet_quoted_name(self):
         from docforge.xlsx.helpers import adjust_formula_references
+
         all_positions = {"My Sheet": {"T1": 1}}
-        result = adjust_formula_references(
-            "=My Sheet!T1.A[2]", 10, {}, all_positions
-        )
+        result = adjust_formula_references("=My Sheet!T1.A[2]", 10, {}, all_positions)
         assert result == "='My Sheet'!A4"
 
     def test_cross_sheet_range(self):
         from docforge.xlsx.helpers import adjust_formula_references
+
         all_positions = {"Data": {"T1": 1}}
-        result = adjust_formula_references(
-            "=SUM(Data!T1.B[0]:T1.B[4])", 10, {}, all_positions
-        )
+        result = adjust_formula_references("=SUM(Data!T1.B[0]:T1.B[4])", 10, {}, all_positions)
         assert result == "=SUM(Data!B2:B6)"
 
     def test_cross_sheet_function_pattern(self):
         from docforge.xlsx.helpers import adjust_formula_references
+
         all_positions = {"Sales": {"T1": 3}}
-        result = adjust_formula_references(
-            "=Sales!T1.SUM(B[0]:D[0])", 10, {}, all_positions
-        )
+        result = adjust_formula_references("=Sales!T1.SUM(B[0]:D[0])", 10, {}, all_positions)
         # T1 starts at row 3, data[0] → row 4
         assert result == "=SUM(Sales!B4:Sales!D4)"
 
     def test_local_reference_still_works(self):
         from docforge.xlsx.helpers import adjust_formula_references
-        result = adjust_formula_references(
-            "=T1.B[0]", 5, {"T1": 1}, {}
-        )
+
+        result = adjust_formula_references("=T1.B[0]", 5, {"T1": 1}, {})
         assert result == "=B2"
 
     def test_mixed_local_and_cross_sheet(self):
         from docforge.xlsx.helpers import adjust_formula_references
+
         all_positions = {"Revenue": {"T1": 1}}
-        result = adjust_formula_references(
-            "=Revenue!T1.B[0]-B[0]", 5, {"T1": 3}, all_positions
-        )
+        result = adjust_formula_references("=Revenue!T1.B[0]-B[0]", 5, {"T1": 3}, all_positions)
         # Revenue!T1.B[0] → Revenue!B2, B[0] → B4 (current table starts at 3, data[0] = row 4)
         assert result == "=Revenue!B2-B4"
 
@@ -385,9 +379,9 @@ class TestNumberFormats:
         growth_cell = ws.cell(row=2, column=2)
         margin_cell = ws.cell(row=3, column=2)
         assert growth_cell.value == pytest.approx(0.5)
-        assert growth_cell.number_format == '0%'
+        assert growth_cell.number_format == "0%"
         assert margin_cell.value == pytest.approx(0.08)
-        assert margin_cell.number_format == '0%'
+        assert margin_cell.number_format == "0%"
 
     def test_non_percent_number_no_percent_format(self):
         """A plain decimal like 0.5 (without '%') should NOT get '0%' format."""
@@ -399,7 +393,7 @@ class TestNumberFormats:
         ws = wb.active
         cell = ws.cell(row=2, column=2)
         assert cell.value == pytest.approx(0.5)
-        assert cell.number_format != '0%'
+        assert cell.number_format != "0%"
 
     def test_thousands_separator_format(self):
         """Values >= 1000 should get '#,##0' number format."""
@@ -411,9 +405,8 @@ class TestNumberFormats:
         ws = wb.active
         cell = ws.cell(row=2, column=2)
         assert cell.value == 5000
-        assert cell.number_format == '#,##0'
+        assert cell.number_format == "#,##0"
 
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
-

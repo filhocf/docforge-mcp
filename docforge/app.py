@@ -49,9 +49,7 @@ if _primary_yaml:
     except Exception as e:
         logger.exception("[dynamic-email] Failed to register email templates from %s: %s", _primary_yaml, e)
 else:
-    logger.info(
-        "[dynamic-email] No dynamic email templates file found at /app/config/email_templates.yaml or config/email_templates.yaml - skipping"
-    )
+    logger.info("[dynamic-email] No dynamic email templates file found at /app/config/email_templates.yaml or config/email_templates.yaml - skipping")
 
 # Look for dynamic DOCX templates in production and local locations.
 # Production (container): /app/config/docx_templates.yaml
@@ -72,34 +70,42 @@ if _docx_yaml:
     except Exception as e:
         logger.exception("[dynamic-docx] Failed to register DOCX templates from %s: %s", _docx_yaml, e)
 else:
-    logger.info(
-        "[dynamic-docx] No dynamic DOCX templates file found at /app/config/docx_templates.yaml or config/docx_templates.yaml - skipping"
-    )
+    logger.info("[dynamic-docx] No dynamic DOCX templates file found at /app/config/docx_templates.yaml or config/docx_templates.yaml - skipping")
+
 
 class PowerPointSlide(BaseModel):
     """PowerPoint slide - can be title, section, content, or table slide based on slide_type."""
-    slide_type: Literal["title", "section", "content", "table"] = Field(description="Type of slide: 'title' for presentation opening, 'section' for dividers, 'content' for slide with bullet points, 'table' for slide with a table")
+
+    slide_type: Literal["title", "section", "content", "table"] = Field(
+        description="Type of slide: 'title' for presentation opening, 'section' for dividers, 'content' for slide with bullet points, 'table' for slide with a table"
+    )
     slide_title: str = Field(description="Title text for the slide")
 
     # Optional fields based on slide type
     author: Optional[str] = Field(default="", description="Author name for title slides - appears in subtitle placeholder. Leave empty for section/content/table slides.")
     slide_text: Optional[List[Dict]] = Field(
         default=None,
-        description="Array of bullet points for content slides. Each bullet point must have 'text' (string) and 'indentation_level' (integer 1-5). Leave empty/null for title, section, and table slides."
+        description="Array of bullet points for content slides. Each bullet point must have 'text' (string) and 'indentation_level' (integer 1-5). Leave empty/null for title, section, and table slides.",
     )
     table_data: Optional[List[List[str]]] = Field(
         default=None,
-        description="Table data for table slides. A list of rows where each row is a list of cell values (strings). The first row is treated as the header row. Leave empty/null for title, section, and content slides."
+        description="Table data for table slides. A list of rows where each row is a list of cell values (strings). The first row is treated as the header row. Leave empty/null for title, section, and content slides.",
     )
+
 
 @mcp.tool(
     name="create_excel_from_markdown",
     description="Converts markdown content with tables and formulas to Excel (.xlsx) format. Use '## Sheet: Name' headings to create multiple sheets.",
     tags={"excel", "spreadsheet", "data"},
-    annotations={"title": "Markdown to Excel Converter"}
+    annotations={"title": "Markdown to Excel Converter"},
 )
 async def create_excel_document(
-    markdown_content: Annotated[str, Field(description="Markdown content containing tables, headers, and formulas. Use '## Sheet: Sheet Name' to create multiple worksheets. Use T1.B[0] for cross-table references and B[0] for current row references. Use SheetName!T1.B[0] for cross-sheet references (resolves to SheetName!B2 in Excel). ALWAYS use [0], [1], [2] notation, NEVER use absolute row numbers like B2, B3. Do NOT count table header as first row, first row has index [0]. Supports cell formatting: **bold**, *italic*.")],
+    markdown_content: Annotated[
+        str,
+        Field(
+            description="Markdown content containing tables, headers, and formulas. Use '## Sheet: Sheet Name' to create multiple worksheets. Use T1.B[0] for cross-table references and B[0] for current row references. Use SheetName!T1.B[0] for cross-sheet references (resolves to SheetName!B2 in Excel). ALWAYS use [0], [1], [2] notation, NEVER use absolute row numbers like B2, B3. Do NOT count table header as first row, first row has index [0]. Supports cell formatting: **bold**, *italic*."
+        ),
+    ],
     file_name: Annotated[Optional[str], Field(description="Custom filename for the output file (without extension). If not provided, a unique identifier will be used.", default=None)] = None,
 ) -> str:
     """
@@ -116,53 +122,61 @@ async def create_excel_document(
         logger.error(f"Error creating Excel document: {e}", exc_info=True)
         raise ToolError(f"Error creating Excel document: {e}")
 
+
 @mcp.tool(
     name="create_word_from_markdown",
     description="Converts markdown content to a professionally formatted Word (.docx) document. Supports headings, lists, tables, images, block quotes, page breaks, horizontal lines, text alignment, and rich inline formatting.",
     tags={"word", "document", "text", "legal", "contract"},
-    annotations={"title": "Markdown to Word Converter"}
+    annotations={"title": "Markdown to Word Converter"},
 )
 async def create_word_document(
-    markdown_content: Annotated[str, Field(description=(
-        "Markdown content for the document body. Separate all block elements with blank lines.\n"
-        "\n"
-        "BLOCK ELEMENTS (each on its own line):\n"
-        "- Headings: # H1, ## H2, ### H3, #### H4, ##### H5, ###### H6\n"
-        "- Unordered lists: - item (or * or +); nest with 3-space indent\n"
-        "- Ordered lists: 1. item, 2. item; nest with 3-space indent\n"
-        "- Tables: | H1 | H2 |\\n|---|---|\\n| C1 | C2 | (cells support inline formatting)\n"
-        "- Block quotes: > text (supports inline formatting)\n"
-        "- Page break: --- (three+ dashes alone on a line — starts new page)\n"
-        "- Horizontal line: *** (three+ asterisks alone on a line — visual separator)\n"
-        "- Images: ![alt text](url)\n"
-        "\n"
-        "INLINE FORMATTING (usable in paragraphs, headings, lists, tables, quotes):\n"
-        "- **bold**, *italic*, ***bold italic***\n"
-        "- ~~strikethrough~~, __underline__ (double underscore — NOT bold)\n"
-        "- `code` (Courier New font)\n"
-        "- [link text](https://url)\n"
-        "- Nesting: **bold with *italic* inside**, *italic with **bold** inside*\n"
-        "- Combinations: **~~bold strikethrough~~**, **__bold underline__**, *~~italic strikethrough~~*\n"
-        "- Escaped literals: \\* \\** \\` to render *, **, ` without formatting\n"
-        "\n"
-        "TEXT ALIGNMENT (HTML tags):\n"
-        "- <center>text</center> or multi-line: <center>\\nline1\\nline2\\n</center>\n"
-        "- <div align=\"right|center|justify|left\">text</div> (single or multi-line)\n"
-        "\n"
-        "LINE BREAKS: End a line with two trailing spaces for a soft break within the same paragraph.\n"
-        "\n"
-        "CONVENTIONS:\n"
-        "- Do NOT confuse --- (page break) with *** (horizontal line).\n"
-        "- Do NOT confuse __underline__ with bold; always use **bold** for bold.\n"
-        "- LEGAL CONTRACTS: use numbered lists (1., 2., 3.) for clauses, nested lists for provisions; use headings only for the contract title.\n"
-        "- Other documents: use headings (# ## ###) to organize sections.\n"
-    ))],
+    markdown_content: Annotated[
+        str,
+        Field(
+            description=(
+                "Markdown content for the document body. Separate all block elements with blank lines.\n"
+                "\n"
+                "BLOCK ELEMENTS (each on its own line):\n"
+                "- Headings: # H1, ## H2, ### H3, #### H4, ##### H5, ###### H6\n"
+                "- Unordered lists: - item (or * or +); nest with 3-space indent\n"
+                "- Ordered lists: 1. item, 2. item; nest with 3-space indent\n"
+                "- Tables: | H1 | H2 |\\n|---|---|\\n| C1 | C2 | (cells support inline formatting)\n"
+                "- Block quotes: > text (supports inline formatting)\n"
+                "- Page break: --- (three+ dashes alone on a line — starts new page)\n"
+                "- Horizontal line: *** (three+ asterisks alone on a line — visual separator)\n"
+                "- Images: ![alt text](url)\n"
+                "\n"
+                "INLINE FORMATTING (usable in paragraphs, headings, lists, tables, quotes):\n"
+                "- **bold**, *italic*, ***bold italic***\n"
+                "- ~~strikethrough~~, __underline__ (double underscore — NOT bold)\n"
+                "- `code` (Courier New font)\n"
+                "- [link text](https://url)\n"
+                "- Nesting: **bold with *italic* inside**, *italic with **bold** inside*\n"
+                "- Combinations: **~~bold strikethrough~~**, **__bold underline__**, *~~italic strikethrough~~*\n"
+                "- Escaped literals: \\* \\** \\` to render *, **, ` without formatting\n"
+                "\n"
+                "TEXT ALIGNMENT (HTML tags):\n"
+                "- <center>text</center> or multi-line: <center>\\nline1\\nline2\\n</center>\n"
+                '- <div align="right|center|justify|left">text</div> (single or multi-line)\n'
+                "\n"
+                "LINE BREAKS: End a line with two trailing spaces for a soft break within the same paragraph.\n"
+                "\n"
+                "CONVENTIONS:\n"
+                "- Do NOT confuse --- (page break) with *** (horizontal line).\n"
+                "- Do NOT confuse __underline__ with bold; always use **bold** for bold.\n"
+                "- LEGAL CONTRACTS: use numbered lists (1., 2., 3.) for clauses, nested lists for provisions; use headings only for the contract title.\n"
+                "- Other documents: use headings (# ## ###) to organize sections.\n"
+            )
+        ),
+    ],
     title: Annotated[Optional[str], Field(description="Document title (shown in file properties)", default=None)] = None,
     author: Annotated[Optional[str], Field(description="Document author name (shown in file properties)", default=None)] = None,
     subject: Annotated[Optional[str], Field(description="Document subject/description (shown in file properties)", default=None)] = None,
     header_text: Annotated[Optional[str], Field(description="Text for document header (top of every page). Use {page} for auto page number, {pages} for total pages.", default=None)] = None,
     footer_text: Annotated[Optional[str], Field(description="Text for document footer (bottom of every page). Use {page} for auto page number, {pages} for total pages.", default=None)] = None,
-    include_toc: Annotated[Optional[bool], Field(description="If true, inserts a Table of Contents at the beginning of the document. The TOC updates automatically when opened in Word.", default=False)] = False,
+    include_toc: Annotated[
+        Optional[bool], Field(description="If true, inserts a Table of Contents at the beginning of the document. The TOC updates automatically when opened in Word.", default=False)
+    ] = False,
     file_name: Annotated[Optional[str], Field(description="Custom filename for the output file (without extension). If not provided, a unique identifier will be used.", default=None)] = None,
 ) -> str:
     """
@@ -189,15 +203,18 @@ async def create_word_document(
         logger.error(f"Error creating Word document: {e}", exc_info=True)
         raise ToolError(f"Error creating Word document: {e}")
 
+
 @mcp.tool(
     name="create_powerpoint_presentation",
     description="Creates PowerPoint presentations from structured slides.",
     tags={"powerpoint", "presentation", "slides"},
-    annotations={"title": "PowerPoint Presentation Creator"}
+    annotations={"title": "PowerPoint Presentation Creator"},
 )
 async def create_powerpoint_presentation(
-    slides: Annotated[List[dict], Field(
-        description="""List of slide objects. Each slide requires 'slide_type' (str) and type-specific fields:
+    slides: Annotated[
+        List[dict],
+        Field(
+            description="""List of slide objects. Each slide requires 'slide_type' (str) and type-specific fields:
 
 - title: {slide_type: "title", slide_title: str, author?: str}
 - section: {slide_type: "section", slide_title: str}
@@ -209,11 +226,9 @@ async def create_powerpoint_presentation(
 - quote: {slide_type: "quote", slide_title?: str, quote_text: str, quote_author?: str}
 
 All slides support optional 'speaker_notes': str field."""
-    )],
-    format: Annotated[Literal["4:3", "16:9"], Field(
-        default="16:9",
-        description="Aspect ratio: '16:9' (widescreen) or '4:3' (traditional)"
-    )] = "16:9",
+        ),
+    ],
+    format: Annotated[Literal["4:3", "16:9"], Field(default="16:9", description="Aspect ratio: '16:9' (widescreen) or '4:3' (traditional)")] = "16:9",
     file_name: Annotated[Optional[str], Field(description="Custom filename for the output file (without extension). If not provided, a unique identifier will be used.", default=None)] = None,
 ) -> str:
     """Creates PowerPoint presentations with structured slide models and professional templates."""
@@ -228,14 +243,20 @@ All slides support optional 'speaker_notes': str field."""
         logger.error(f"Error creating PowerPoint presentation: {e}", exc_info=True)
         raise ToolError(f"Error creating PowerPoint presentation: {e}")
 
+
 @mcp.tool(
     name="create_email_draft",
     description="Creates an email draft in EML format with HTML content using preset professional styling.",
     tags={"email", "eml", "communication"},
-    annotations={"title": "Email Draft Creator"}
+    annotations={"title": "Email Draft Creator"},
 )
 async def create_email_draft(
-    content: Annotated[str, Field(description="BODY CONTENT ONLY - Do NOT include HTML structure tags like <html>, <head>, <body>, or <style>. Do NOT include any CSS styling. Use <p> for greetings and for signatures, never headers. Use <h2> for section headers (will be bold), <h3> for subsection headers (will be underlined). HTML tags allowed: <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>, <div>.")],
+    content: Annotated[
+        str,
+        Field(
+            description="BODY CONTENT ONLY - Do NOT include HTML structure tags like <html>, <head>, <body>, or <style>. Do NOT include any CSS styling. Use <p> for greetings and for signatures, never headers. Use <h2> for section headers (will be bold), <h3> for subsection headers (will be underlined). HTML tags allowed: <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>, <div>."
+        ),
+    ],
     subject: Annotated[str, Field(description="Email subject line")],
     to: Annotated[Optional[List[str]], Field(description="List of recipient email addresses", default=None)],
     cc: Annotated[Optional[List[str]], Field(description="List of CC recipient email addresses", default=None)],
@@ -267,12 +288,8 @@ async def create_email_draft(
         logger.error(f"Error creating email draft: {e}", exc_info=True)
         raise ToolError(f"Error creating email draft: {e}")
 
-@mcp.tool(
-    name="create_xml_file",
-    description="Creates an XML file from provided XML content.",
-    tags={"xml", "data", "configuration"},
-    annotations={"title": "XML File Creator"}
-)
+
+@mcp.tool(name="create_xml_file", description="Creates an XML file from provided XML content.", tags={"xml", "data", "configuration"}, annotations={"title": "XML File Creator"})
 async def create_xml_document(
     xml_content: Annotated[str, Field(description="Complete, well-formed XML content. Must be valid XML with proper opening and closing tags.")],
     file_name: Annotated[Optional[str], Field(description="Custom filename for the output file (without extension). If not provided, a unique identifier will be used.", default=None)] = None,
@@ -291,6 +308,7 @@ async def create_xml_document(
     except Exception as e:
         logger.error(f"Error creating XML file: {e}", exc_info=True)
         raise ToolError(f"Error creating XML file: {e}")
+
 
 # === Read Tools ===
 from docforge.read import (
@@ -534,11 +552,17 @@ async def tool_create_excel_chart(
 ) -> str:
     try:
         return create_excel_chart(
-            file_path=file_path, chart_type=chart_type, title=title,
-            sheet_name=sheet_name, categories_column=categories_column,
-            data_start_column=data_start_column, data_end_column=data_end_column,
-            chart_position=chart_position, inline_data=inline_data,
-            output_path=output_path, file_name=file_name,
+            file_path=file_path,
+            chart_type=chart_type,
+            title=title,
+            sheet_name=sheet_name,
+            categories_column=categories_column,
+            data_start_column=data_start_column,
+            data_end_column=data_end_column,
+            chart_position=chart_position,
+            inline_data=inline_data,
+            output_path=output_path,
+            file_name=file_name,
         )
     except Exception as e:
         raise ToolError(f"Error creating chart: {e}")
@@ -817,10 +841,4 @@ async def tool_reorder_pptx_slides(
 
 
 if __name__ == "__main__":
-    mcp.run(
-        transport="streamable-http",
-        host="0.0.0.0",
-        port=8958,
-        log_level=config.logging.mcp_level_str,
-        path="/mcp"
-    )
+    mcp.run(transport="streamable-http", host="0.0.0.0", port=8958, log_level=config.logging.mcp_level_str, path="/mcp")

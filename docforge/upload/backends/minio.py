@@ -47,10 +47,7 @@ def upload_to_minio(file_object, file_name: str, minicfg, signed_url_expires_in:
             ExpiresIn=signed_url_expires_in,
         )
 
-        return (
-            "Link to created document to be shared with user in markdown format: "
-            f"{url} . Link is valid for {signed_url_expires_in} seconds."
-        )
+        return f"Link to created document to be shared with user in markdown format: {url} . Link is valid for {signed_url_expires_in} seconds."
     except (BotoCoreError, ClientError, NoCredentialsError) as err:
         logger.error("MinIO upload error: %s", err)
         return None

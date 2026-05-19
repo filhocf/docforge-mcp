@@ -1,6 +1,5 @@
 """Tests for advanced PPTX features."""
 
-
 import pytest
 from pptx import Presentation
 

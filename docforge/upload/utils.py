@@ -18,9 +18,9 @@ def sanitize_filename(name: str) -> str:
     :return: Sanitized string safe for use in object/blob names
     """
     # Remove characters that are unsafe for filenames/URLs
-    name = re.sub(r'[^\w\s\-.]', '', name)
+    name = re.sub(r"[^\w\s\-.]", "", name)
     # Collapse whitespace to single underscores
-    name = re.sub(r'\s+', '_', name.strip())
+    name = re.sub(r"\s+", "_", name.strip())
     # Truncate to 100 chars to avoid overly long names
     name = name[:100]
     return name or "document"
@@ -57,4 +57,3 @@ def get_content_type(file_name: str) -> str:
         return "application/xml"
     else:
         raise ValueError("Unknown file type")
-

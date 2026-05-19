@@ -106,5 +106,3 @@ class ApiKeyAuthMiddleware(Middleware):
             raise AuthorizationError("Unauthorized – invalid or missing API key")
 
         return await call_next(context)
-
-

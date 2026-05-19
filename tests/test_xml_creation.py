@@ -128,7 +128,7 @@ class TestValidateXml:
 class TestCreateXmlFile:
     """Tests for the create_xml_file function."""
 
-    @patch('docforge.xml.base_xml_tool.upload_file')
+    @patch("docforge.xml.base_xml_tool.upload_file")
     def test_create_xml_file_success(self, mock_upload):
         """Test successful XML file creation."""
         mock_upload.return_value = "http://example.com/file.xml"
@@ -143,13 +143,13 @@ class TestCreateXmlFile:
         assert call_args[0][1] == "xml"
         assert isinstance(call_args[0][0], io.BytesIO)
 
-    @patch('docforge.xml.base_xml_tool.upload_file')
+    @patch("docforge.xml.base_xml_tool.upload_file")
     def test_create_xml_file_adds_declaration(self, mock_upload):
         """Test that XML declaration is added when not present."""
         captured_content = {}
 
         def capture_upload(file_obj, suffix, **kwargs):
-            captured_content['data'] = file_obj.getvalue()
+            captured_content["data"] = file_obj.getvalue()
             return "http://example.com/file.xml"
 
         mock_upload.side_effect = capture_upload
@@ -157,17 +157,17 @@ class TestCreateXmlFile:
 
         create_xml_file(xml_content)
 
-        content = captured_content['data'].decode('utf-8')
+        content = captured_content["data"].decode("utf-8")
         assert content.startswith('<?xml version="1.0" encoding="UTF-8"?>')
         assert "<root><child>Hello</child></root>" in content
 
-    @patch('docforge.xml.base_xml_tool.upload_file')
+    @patch("docforge.xml.base_xml_tool.upload_file")
     def test_create_xml_file_preserves_existing_declaration(self, mock_upload):
         """Test that existing XML declaration is preserved."""
         captured_content = {}
 
         def capture_upload(file_obj, suffix, **kwargs):
-            captured_content['data'] = file_obj.getvalue()
+            captured_content["data"] = file_obj.getvalue()
             return "http://example.com/file.xml"
 
         mock_upload.side_effect = capture_upload
@@ -175,17 +175,17 @@ class TestCreateXmlFile:
 
         create_xml_file(xml_content)
 
-        content = captured_content['data'].decode('utf-8')
+        content = captured_content["data"].decode("utf-8")
         # Should not have duplicate declarations
-        assert content.count('<?xml') == 1
+        assert content.count("<?xml") == 1
 
-    @patch('docforge.xml.base_xml_tool.upload_file')
+    @patch("docforge.xml.base_xml_tool.upload_file")
     def test_create_xml_file_respects_encoding(self, mock_upload):
         """Test that declared encoding is respected."""
         captured_content = {}
 
         def capture_upload(file_obj, suffix, **kwargs):
-            captured_content['data'] = file_obj.getvalue()
+            captured_content["data"] = file_obj.getvalue()
             return "http://example.com/file.xml"
 
         mock_upload.side_effect = capture_upload
@@ -195,16 +195,16 @@ class TestCreateXmlFile:
         create_xml_file(xml_content)
 
         # Content should be encoded as ISO-8859-1
-        content = captured_content['data'].decode('ISO-8859-1')
-        assert 'Héllo' in content
+        content = captured_content["data"].decode("ISO-8859-1")
+        assert "Héllo" in content
 
-    @patch('docforge.xml.base_xml_tool.upload_file')
+    @patch("docforge.xml.base_xml_tool.upload_file")
     def test_create_xml_file_strips_whitespace(self, mock_upload):
         """Test that leading/trailing whitespace is stripped."""
         captured_content = {}
 
         def capture_upload(file_obj, suffix, **kwargs):
-            captured_content['data'] = file_obj.getvalue()
+            captured_content["data"] = file_obj.getvalue()
             return "http://example.com/file.xml"
 
         mock_upload.side_effect = capture_upload
@@ -212,9 +212,9 @@ class TestCreateXmlFile:
 
         create_xml_file(xml_content)
 
-        content = captured_content['data'].decode('utf-8')
+        content = captured_content["data"].decode("utf-8")
         # Should start with declaration, not whitespace
-        assert content.startswith('<?xml')
+        assert content.startswith("<?xml")
 
     def test_create_xml_file_invalid_xml_raises_error(self):
         """Test that invalid XML raises XMLValidationError."""
@@ -235,7 +235,7 @@ class TestCreateXmlFile:
         with pytest.raises(XMLValidationError):
             create_xml_file("   \n\t  ")
 
-    @patch('docforge.xml.base_xml_tool.upload_file')
+    @patch("docforge.xml.base_xml_tool.upload_file")
     def test_create_xml_file_upload_error_raises_exception(self, mock_upload):
         """Test that upload errors raise XMLFileCreationError."""
         mock_upload.side_effect = Exception("Upload failed")
@@ -246,7 +246,7 @@ class TestCreateXmlFile:
 
         assert "Error creating XML file" in str(exc_info.value)
 
-    @patch('docforge.xml.base_xml_tool.upload_file')
+    @patch("docforge.xml.base_xml_tool.upload_file")
     def test_create_xml_file_closes_buffer(self, mock_upload):
         """Test that BytesIO buffer is closed after upload."""
         mock_upload.return_value = "http://example.com/file.xml"
@@ -297,16 +297,17 @@ class TestXmlExceptionExports:
     def test_xml_validation_error_importable(self):
         """Test that XMLValidationError can be imported from docforge.xml."""
         from docforge.xml import XMLValidationError
+
         assert XMLValidationError is not None
 
     def test_xml_file_creation_error_importable(self):
         """Test that XMLFileCreationError can be imported from docforge.xml."""
         from docforge.xml import XMLFileCreationError
+
         assert XMLFileCreationError is not None
 
     def test_create_xml_file_importable(self):
         """Test that create_xml_file can be imported from docforge.xml."""
         from docforge.xml import create_xml_file
+
         assert create_xml_file is not None
-
-

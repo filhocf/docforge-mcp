@@ -25,9 +25,7 @@ def _load_template() -> str:
     path = find_email_template()
     if not path:
         logger.error("Email template not found: tried custom_email_template.html and default_email_template.html")
-        raise FileNotFoundError(
-            "Email template not found: tried custom_email_template.html and default_email_template.html"
-        )
+        raise FileNotFoundError("Email template not found: tried custom_email_template.html and default_email_template.html")
     try:
         with open(path, "r", encoding="utf-8") as f:
             return f.read()
@@ -59,46 +57,46 @@ def create_eml(to=None, cc=None, bcc=None, re=None, content=None, priority="norm
         template_html = _load_template()
 
         # Prepare context
-        safe_language = (language or "").replace('"', '').replace("'", '')
+        safe_language = (language or "").replace('"', "").replace("'", "")
         escaped_subject = html.escape(re or "")
 
         renderer = pystache.Renderer(escape=lambda u: u)  # We'll manually escape where needed
         context = {
-            "language": safe_language,   # safe for attribute insertion
+            "language": safe_language,  # safe for attribute insertion
             "subject": escaped_subject,  # already escaped
-            "content": content,          # inserted unescaped via triple braces {{{content}}}
+            "content": content,  # inserted unescaped via triple braces {{{content}}}
         }
         complete_html = renderer.render(template_html, context)
 
-        msg = MIMEText(complete_html, 'html', 'utf-8')
+        msg = MIMEText(complete_html, "html", "utf-8")
         # Ensure proper encoding (base64 avoids quoted-printable soft breaks generating '=')
-        if 'Content-Transfer-Encoding' in msg:
-            msg.replace_header('Content-Transfer-Encoding', 'base64')
+        if "Content-Transfer-Encoding" in msg:
+            msg.replace_header("Content-Transfer-Encoding", "base64")
         else:
-            msg.add_header('Content-Transfer-Encoding', 'base64')
+            msg.add_header("Content-Transfer-Encoding", "base64")
 
         if to:
-            msg['To'] = ", ".join(to)
+            msg["To"] = ", ".join(to)
         if cc:
-            msg['Cc'] = ", ".join(cc)
+            msg["Cc"] = ", ".join(cc)
         if bcc:
-            msg['Bcc'] = ", ".join(bcc)
+            msg["Bcc"] = ", ".join(bcc)
 
-        msg['Subject'] = Header(re, 'utf-8')
-        msg['Date'] = formatdate(localtime=True)
-        msg['Content-Language'] = safe_language
-        msg['Accept-Language'] = safe_language
+        msg["Subject"] = Header(re, "utf-8")
+        msg["Date"] = formatdate(localtime=True)
+        msg["Content-Language"] = safe_language
+        msg["Accept-Language"] = safe_language
 
-        if priority.lower() == 'high':
-            msg['X-Priority'] = '1 (Highest)'
-            msg['X-MSMail-Priority'] = 'High'
-            msg['Importance'] = 'High'
-        elif priority.lower() == 'low':
-            msg['X-Priority'] = '5 (Lowest)'
-            msg['X-MSMail-Priority'] = 'Low'
-            msg['Importance'] = 'Low'
+        if priority.lower() == "high":
+            msg["X-Priority"] = "1 (Highest)"
+            msg["X-MSMail-Priority"] = "High"
+            msg["Importance"] = "High"
+        elif priority.lower() == "low":
+            msg["X-Priority"] = "5 (Lowest)"
+            msg["X-MSMail-Priority"] = "Low"
+            msg["Importance"] = "Low"
 
-        msg['X-Unsent'] = '1'
+        msg["X-Unsent"] = "1"
 
         buffer = io.BytesIO()
         msg_bytes = msg.as_bytes()

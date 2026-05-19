@@ -59,6 +59,7 @@ def sample_pptx(tmp_path):
 
 # === DOCX Edit Tests ===
 
+
 class TestDocxEditor:
     def test_edit_paragraph(self, sample_docx, tmp_path):
         out = str(tmp_path / "out.docx")
@@ -102,6 +103,7 @@ class TestDocxEditor:
 
 # === XLSX Edit Tests ===
 
+
 class TestXlsxEditor:
     def test_edit_cell(self, sample_xlsx, tmp_path):
         out = str(tmp_path / "out.xlsx")
@@ -131,6 +133,7 @@ class TestXlsxEditor:
 
 
 # === PPTX Edit Tests ===
+
 
 class TestPptxEditor:
     def test_edit_slide_text(self, sample_pptx, tmp_path):

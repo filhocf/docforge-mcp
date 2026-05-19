@@ -41,4 +41,3 @@ def create_presentation(slides: List[Dict[str, Any]], format: str = "4:3", file_
         logger.error(f"Failed to create presentation: {e}")
         # Re-raise so the MCP tool wrapper can return a proper error
         raise
-

@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 # Utility Functions
 # =============================================================================
 
+
 def parse_table_data(table_data: List[List[str]]) -> List[List[str]]:
     """Clean table data by removing markdown separator rows.
 
@@ -45,13 +46,7 @@ def parse_table_data(table_data: List[List[str]]) -> List[List[str]]:
     if not table_data:
         return []
 
-    return [
-        row for row in table_data
-        if not (row and all(
-            '---' in cell or ':-:' in cell or ':--' in cell or '--:' in cell or cell.strip() == ''
-            for cell in row
-        ))
-    ]
+    return [row for row in table_data if not (row and all("---" in cell or ":-:" in cell or ":--" in cell or "--:" in cell or cell.strip() == "" for cell in row))]
 
 
 def parse_color(color_hex: str, default: RGBColor) -> RGBColor:
@@ -73,6 +68,7 @@ def parse_color(color_hex: str, default: RGBColor) -> RGBColor:
 # =============================================================================
 # Slide Helper Mixins
 # =============================================================================
+
 
 class SlideHelperMixin:
     """Mixin providing common slide helper methods."""
@@ -146,18 +142,7 @@ class SlideHelperMixin:
 class TextHelperMixin:
     """Mixin providing text-related helper methods."""
 
-    def _add_title_textbox(
-        self,
-        slide,
-        title_text: str,
-        left: int = None,
-        top: int = None,
-        width: int = None,
-        height: int = None,
-        font_size: int = None,
-        bold: bool = True,
-        alignment=PP_ALIGN.LEFT
-    ):
+    def _add_title_textbox(self, slide, title_text: str, left: int = None, top: int = None, width: int = None, height: int = None, font_size: int = None, bold: bool = True, alignment=PP_ALIGN.LEFT):
         """Add a title textbox to a slide.
 
         Args:
@@ -189,18 +174,7 @@ class TextHelperMixin:
         return shape
 
     def _add_text_box(
-        self,
-        slide,
-        text: str,
-        left: int,
-        top: int,
-        width: int,
-        height: int,
-        font_size: int = None,
-        bold: bool = False,
-        italic: bool = False,
-        alignment=PP_ALIGN.LEFT,
-        word_wrap: bool = True
+        self, slide, text: str, left: int, top: int, width: int, height: int, font_size: int = None, bold: bool = False, italic: bool = False, alignment=PP_ALIGN.LEFT, word_wrap: bool = True
     ):
         """Add a simple text box to a slide.
 
@@ -230,16 +204,7 @@ class TextHelperMixin:
 
         return shape
 
-    def _add_bullet_list(
-        self,
-        slide,
-        items: List[dict],
-        left: int,
-        top: int,
-        width: int,
-        height: int,
-        font_size: int = None
-    ):
+    def _add_bullet_list(self, slide, items: List[dict], left: int, top: int, width: int, height: int, font_size: int = None):
         """Add a bullet list to a slide.
 
         Args:
@@ -267,12 +232,7 @@ class TextHelperMixin:
 
         return shape
 
-    def _fill_placeholder_with_bullets(
-        self,
-        placeholder,
-        items: List[dict],
-        font_size: int = None
-    ):
+    def _fill_placeholder_with_bullets(self, placeholder, items: List[dict], font_size: int = None):
         """Fill a placeholder shape with bullet list content.
 
         Args:
@@ -315,30 +275,16 @@ class TableHelperMixin:
 
             # Remove existing fill
             for child in list(tcPr):
-                if child.tag.endswith('}solidFill'):
+                if child.tag.endswith("}solidFill"):
                     tcPr.remove(child)
 
             # Add new fill
-            solidFill = parse_xml(
-                f'<a:solidFill xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
-                f'<a:srgbClr val="{color}"/>'
-                f'</a:solidFill>'
-            )
+            solidFill = parse_xml(f'<a:solidFill xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:srgbClr val="{color}"/></a:solidFill>')
             tcPr.append(solidFill)
         except Exception as e:
             logger.debug(f"Could not set cell fill color: {e}")
 
-    def _create_styled_table(
-        self,
-        slide,
-        table_data: List[List[str]],
-        left: int,
-        top: int,
-        width: int,
-        height: int,
-        header_color: RGBColor = None,
-        alternate_rows: bool = True
-    ):
+    def _create_styled_table(self, slide, table_data: List[List[str]], left: int, top: int, width: int, height: int, header_color: RGBColor = None, alternate_rows: bool = True):
         """Create a styled table on a slide.
 
         Args:
@@ -383,17 +329,7 @@ class TableHelperMixin:
 class ImageHelperMixin:
     """Mixin providing image-related helper methods."""
 
-    def _add_image_from_url(
-        self,
-        slide,
-        image_url: str,
-        left: int,
-        top: int,
-        max_width: int,
-        max_height: int,
-        center_horizontal: bool = True,
-        center_vertical: bool = False
-    ) -> Optional[Any]:
+    def _add_image_from_url(self, slide, image_url: str, left: int, top: int, max_width: int, max_height: int, center_horizontal: bool = True, center_vertical: bool = False) -> Optional[Any]:
         """Download and add an image from URL to a slide.
 
         Args:
@@ -415,9 +351,7 @@ class ImageHelperMixin:
         try:
             image_data, _ = download_image(image_url)
 
-            picture = slide.shapes.add_picture(
-                image_data, left, top, width=max_width
-            )
+            picture = slide.shapes.add_picture(image_data, left, top, width=max_width)
 
             # Scale to fit height if needed
             if picture.height > max_height:
@@ -451,9 +385,4 @@ class ImageHelperMixin:
             message: Error message to display.
             left, top, width: Position and width.
         """
-        self._add_text_box(
-            slide, f"[{message}]",
-            left, top, width, Inches(1),
-            italic=True, alignment=PP_ALIGN.CENTER
-        )
-
+        self._add_text_box(slide, f"[{message}]", left, top, width, Inches(1), italic=True, alignment=PP_ALIGN.CENTER)

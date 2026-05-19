@@ -38,11 +38,13 @@ def get_docx_paragraphs(file_path: str) -> list[dict]:
     doc = Document(file_path)
     result = []
     for i, p in enumerate(doc.paragraphs):
-        result.append({
-            "index": i,
-            "style": p.style.name if p.style else "Normal",
-            "text": p.text,
-        })
+        result.append(
+            {
+                "index": i,
+                "style": p.style.name if p.style else "Normal",
+                "text": p.text,
+            }
+        )
     return result
 
 
@@ -54,10 +56,12 @@ def get_docx_tables(file_path: str) -> list[dict]:
         rows = []
         for row in table.rows:
             rows.append([cell.text for cell in row.cells])
-        result.append({
-            "index": i,
-            "rows": len(table.rows),
-            "columns": len(table.columns),
-            "data": rows,
-        })
+        result.append(
+            {
+                "index": i,
+                "rows": len(table.rows),
+                "columns": len(table.columns),
+                "data": rows,
+            }
+        )
     return result

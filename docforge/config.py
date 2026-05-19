@@ -32,6 +32,7 @@ load_dotenv()
 
 class LogLevel(str, Enum):
     """Application log levels (restricted to INFO and DEBUG)."""
+
     DEBUG = "DEBUG"
     INFO = "INFO"
 
@@ -47,6 +48,7 @@ class LoggingSettings(BaseModel):
     - level_no: numeric logging level
     - mcp_level_str: lower-case string for FastMCP's `log_level` argument
     """
+
     debug: bool = Field(default=False, description="True to enable DEBUG level, False for INFO")
 
     @property
@@ -87,6 +89,7 @@ class S3Settings(BaseModel):
     will resolve the region from the environment, config files, or instance
     metadata.
     """
+
     access_key: Optional[str] = None
     secret_key: Optional[str] = None
     region: Optional[str] = None
@@ -119,15 +122,10 @@ class S3Settings(BaseModel):
         has_key = self.access_key is not None
         has_secret = self.secret_key is not None
         if has_key != has_secret:
-            raise ValueError(
-                "AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY must both be set or both be omitted. "
-                "Omit both to use the AWS default credential chain (IRSA, SSO, instance profile, etc.)."
-            )
+            raise ValueError("AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY must both be set or both be omitted. Omit both to use the AWS default credential chain (IRSA, SSO, instance profile, etc.).")
 
         if has_key and has_secret and self.region is None:
-            raise ValueError(
-                "AWS_REGION is required when explicit AWS_ACCESS_KEY / AWS_SECRET_ACCESS_KEY are provided."
-            )
+            raise ValueError("AWS_REGION is required when explicit AWS_ACCESS_KEY / AWS_SECRET_ACCESS_KEY are provided.")
 
         return self
 
@@ -143,6 +141,7 @@ class GCSSettings(BaseModel):
     When credentials_path is omitted, the client uses Application Default
     Credentials (ADC), which automatically picks up Workload Identity on GKE.
     """
+
     bucket: str
     credentials_path: Optional[str] = None
 
@@ -168,6 +167,7 @@ class AzureSettings(BaseModel):
     Note: `endpoint` is optional; if empty, defaults to
     https://<account>.blob.core.windows.net
     """
+
     account_name: str
     account_key: str
     container: str
@@ -177,11 +177,13 @@ class AzureSettings(BaseModel):
     def _non_empty(self) -> "AzureSettings":
         """Ensure all required Azure fields are non-empty."""
         missing = [
-            name for name, val in (
+            name
+            for name, val in (
                 ("AZURE_STORAGE_ACCOUNT_NAME", self.account_name),
                 ("AZURE_STORAGE_ACCOUNT_KEY", self.account_key),
                 ("AZURE_CONTAINER", self.container),
-            ) if not str(val).strip()
+            )
+            if not str(val).strip()
         ]
         if missing:
             raise ValueError(f"Missing required Azure settings: {', '.join(missing)}")
@@ -202,12 +204,14 @@ class MinioSettings(BaseModel):
     @model_validator(mode="after")
     def _non_empty(self) -> "MinioSettings":
         missing = [
-            name for name, val in (
+            name
+            for name, val in (
                 ("MINIO_ENDPOINT", self.endpoint),
                 ("MINIO_ACCESS_KEY", self.access_key),
                 ("MINIO_SECRET_KEY", self.secret_key),
                 ("MINIO_BUCKET", self.bucket),
-            ) if not str(val).strip()
+            )
+            if not str(val).strip()
         ]
         if missing:
             raise ValueError(f"Missing required MinIO settings: {', '.join(missing)}")
@@ -216,6 +220,7 @@ class MinioSettings(BaseModel):
 
 class StorageStrategy(str, Enum):
     """Supported upload backends for produced documents."""
+
     LOCAL = "LOCAL"
     S3 = "S3"
     GCS = "GCS"
@@ -229,6 +234,7 @@ class StorageSettings(BaseModel):
     Note: The LOCAL strategy always writes to the working folder ./app/upload;
     there is no configurable output directory for LOCAL.
     """
+
     strategy: StorageStrategy = Field(default=StorageStrategy.LOCAL)
     signed_url_expires_in: int = Field(default=3600, gt=0, description="TTL for S3/GCS/Azure download links in seconds")
 
@@ -258,6 +264,7 @@ class StorageSettings(BaseModel):
 
 class Config(BaseModel):
     """Top-level configuration container used by the whole application."""
+
     logging: LoggingSettings
     storage: StorageSettings
     api_key: Optional[str] = Field(

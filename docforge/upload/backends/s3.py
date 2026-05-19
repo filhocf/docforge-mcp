@@ -57,11 +57,11 @@ def _create_s3_client(s3cfg):
     if s3cfg.use_explicit_credentials:
         logger.info("Creating S3 client with explicit credentials (region: %s)", s3cfg.region)
         return boto3.client(
-            's3',
+            "s3",
             region_name=s3cfg.region,
             aws_access_key_id=s3cfg.access_key,
             aws_secret_access_key=s3cfg.secret_key,
-            endpoint_url=f'https://s3.{s3cfg.region}.amazonaws.com',
+            endpoint_url=f"https://s3.{s3cfg.region}.amazonaws.com",
         )
 
     # Use the default credential chain (IRSA, SSO, instance profile, etc.)
@@ -70,7 +70,7 @@ def _create_s3_client(s3cfg):
         s3cfg.region or "auto-detected",
     )
     client_kwargs = {"region_name": s3cfg.region} if s3cfg.region else {}
-    return boto3.client('s3', **client_kwargs)
+    return boto3.client("s3", **client_kwargs)
 
 
 def upload_to_s3(file_object, file_name: str, s3cfg, signed_url_expires_in: int):
@@ -108,13 +108,13 @@ def upload_to_s3(file_object, file_name: str, s3cfg, signed_url_expires_in: int)
             Fileobj=file_object,
             Bucket=s3cfg.bucket,
             Key=file_name,
-            ExtraArgs={'ContentType': content_type},
+            ExtraArgs={"ContentType": content_type},
         )
 
         # Generate a pre-signed URL valid for configured duration
         url = s3_client.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': s3cfg.bucket, 'Key': file_name},
+            "get_object",
+            Params={"Bucket": s3cfg.bucket, "Key": file_name},
             ExpiresIn=signed_url_expires_in,
         )
 

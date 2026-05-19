@@ -7,7 +7,7 @@ def edit_pptx_slide_text(file_path: str, slide_index: int, old_text: str, new_te
     """Replace text in a specific slide."""
     prs = Presentation(file_path)
     if slide_index < 0 or slide_index >= len(prs.slides):
-        raise ValueError(f"Slide index {slide_index} out of range (0-{len(prs.slides)-1})")
+        raise ValueError(f"Slide index {slide_index} out of range (0-{len(prs.slides) - 1})")
 
     slide = prs.slides[slide_index]
     count = 0
@@ -28,7 +28,7 @@ def delete_pptx_slide(file_path: str, slide_index: int, output_path: str | None 
     """Delete a slide at the given index."""
     prs = Presentation(file_path)
     if slide_index < 0 or slide_index >= len(prs.slides):
-        raise ValueError(f"Slide index {slide_index} out of range (0-{len(prs.slides)-1})")
+        raise ValueError(f"Slide index {slide_index} out of range (0-{len(prs.slides) - 1})")
 
     rId = prs.slides._sldIdLst[slide_index].rId
     prs.part.drop_rel(rId)
@@ -45,7 +45,7 @@ def reorder_pptx_slides(file_path: str, new_order: list[int], output_path: str |
     slide_count = len(prs.slides)
 
     if sorted(new_order) != list(range(slide_count)):
-        raise ValueError(f"new_order must be a permutation of [0..{slide_count-1}], got {new_order}")
+        raise ValueError(f"new_order must be a permutation of [0..{slide_count - 1}], got {new_order}")
 
     # Reorder by manipulating the sldIdLst
     sldIdLst = prs.slides._sldIdLst

@@ -26,6 +26,7 @@ templates:
         required: true
 ```
 """
+
 from __future__ import annotations
 
 import io
@@ -57,23 +58,23 @@ logger = logging.getLogger(__name__)
 
 # Type mapping for YAML -> Python types
 TYPE_MAP = {
-    "string": str, "str": str,
-    "int": int, "integer": int,
+    "string": str,
+    "str": str,
+    "int": int,
+    "integer": int,
     "float": float,
-    "bool": bool, "boolean": bool,
-    "list": list[str], "list[str]": list[str], "list[string]": list[str],
+    "bool": bool,
+    "boolean": bool,
+    "list": list[str],
+    "list[str]": list[str],
+    "list[string]": list[str],
 }
 
 # Regex to find Mustache-style placeholders: {{name}} or {{{name}}}
-PLACEHOLDER_PATTERN = re.compile(r'\{\{\{?([a-zA-Z_][a-zA-Z0-9_]*)\}?\}\}')
+PLACEHOLDER_PATTERN = re.compile(r"\{\{\{?([a-zA-Z_][a-zA-Z0-9_]*)\}?\}\}")
 
 
-
-def _insert_markdown_content_after_paragraph(
-    doc: DocxDocument,
-    paragraph: Paragraph,
-    content: str
-) -> None:
+def _insert_markdown_content_after_paragraph(doc: DocxDocument, paragraph: Paragraph, content: str) -> None:
     """Insert markdown content (including lists and headings) after a paragraph.
 
     This function processes block-level markdown content including:
@@ -88,7 +89,7 @@ def _insert_markdown_content_after_paragraph(
         content: The markdown content to insert
     """
     try:
-        lines = content.split('\n')
+        lines = content.split("\n")
         i = 0
 
         # Find the paragraph's position in the document body
@@ -131,12 +132,7 @@ def find_docx_template_by_name(filename: str) -> Optional[str]:
     return str(found) if found else None
 
 
-def _replace_placeholder_in_paragraph(
-    paragraph: Paragraph,
-    placeholder: str,
-    value: str,
-    doc: DocxDocument = None
-) -> bool:
+def _replace_placeholder_in_paragraph(paragraph: Paragraph, placeholder: str, value: str, doc: DocxDocument = None) -> bool:
     """Replace a placeholder in a paragraph with markdown-formatted text.
 
     This function handles the case where a placeholder might be split across multiple runs
@@ -257,11 +253,7 @@ def _replace_placeholder_in_paragraph(
         return False
 
 
-def _replace_placeholders_in_paragraph(
-    paragraph: Paragraph,
-    context: Dict[str, str],
-    doc: DocxDocument = None
-) -> None:
+def _replace_placeholders_in_paragraph(paragraph: Paragraph, context: Dict[str, str], doc: DocxDocument = None) -> None:
     """Replace all placeholders in a paragraph with their values.
 
     This function iteratively replaces placeholders one at a time, re-scanning
@@ -299,7 +291,7 @@ def _replace_placeholders_in_paragraph(
                 value = str(value)
 
             # Try triple brace first, then double brace
-            for placeholder in [f'{{{{{{{placeholder_name}}}}}}}', f'{{{{{placeholder_name}}}}}']:
+            for placeholder in [f"{{{{{{{placeholder_name}}}}}}}", f"{{{{{placeholder_name}}}}}"]:
                 if placeholder in paragraph.text:
                     if _replace_placeholder_in_paragraph(paragraph, placeholder, value, doc):
                         replaced = True
@@ -313,11 +305,7 @@ def _replace_placeholders_in_paragraph(
             break
 
 
-def _replace_placeholders_in_table(
-    table: Table,
-    context: Dict[str, str],
-    doc: DocxDocument = None
-) -> None:
+def _replace_placeholders_in_table(table: Table, context: Dict[str, str], doc: DocxDocument = None) -> None:
     """Replace all placeholders in a table.
 
     Note: Block-level content (lists) is not supported in table cells.
@@ -373,8 +361,8 @@ def _replace_placeholders_in_document(doc: DocxDocument, context: Dict[str, str]
                 parts.append(section.first_page_footer)
 
         # Even-page header/footer (when template uses "Different Even & Odd Pages")
-        even_page_header = getattr(section, 'even_page_header', None)
-        even_page_footer = getattr(section, 'even_page_footer', None)
+        even_page_header = getattr(section, "even_page_header", None)
+        even_page_footer = getattr(section, "even_page_footer", None)
         if even_page_header:
             parts.append(even_page_header)
         if even_page_footer:
@@ -437,10 +425,7 @@ def _register_single_template(mcp: FastMCP, spec: Dict[str, Any]) -> None:
     # Validate path is filename only (no directory components)
     docx_path_obj = Path(docx_path)
     if docx_path_obj.is_absolute() or len(docx_path_obj.parts) != 1:
-        logger.error(
-            f"[dynamic-docx] docx_path must be filename only (no directories) for {name}; "
-            f"got '{docx_path}'"
-        )
+        logger.error(f"[dynamic-docx] docx_path must be filename only (no directories) for {name}; got '{docx_path}'")
         return
 
     # Resolve the template file
@@ -472,9 +457,7 @@ def _register_single_template(mcp: FastMCP, spec: Dict[str, Any]) -> None:
             required = bool(arg.get("required", True))
             default = arg.get("default", (... if required else None))
             if default is not ... and default is not None and default not in lit_values:
-                logger.warning(
-                    f"[dynamic-docx] Default '{default}' not in enum for {arg_name}; ignoring default."
-                )
+                logger.warning(f"[dynamic-docx] Default '{default}' not in enum for {arg_name}; ignoring default.")
                 default = ... if required else None
             desc = arg.get("description") or f"One of: {', '.join(map(str, lit_values))}"
             fields[arg_name] = (py_type, Field(default, description=desc))
@@ -523,8 +506,8 @@ def _register_single_template(mcp: FastMCP, spec: Dict[str, Any]) -> None:
                 logger.error(f"[dynamic-docx] Error generating document from {_name}: {e}", exc_info=True)
                 raise ToolError(f"Error generating document from template {_name}: {e}")
 
-        tool_impl.__annotations__['data'] = _model  # type: ignore[index]
-        tool_impl.__annotations__['return'] = str  # type: ignore[index]
+        tool_impl.__annotations__["data"] = _model  # type: ignore[index]
+        tool_impl.__annotations__["return"] = str  # type: ignore[index]
         return tool_impl
 
     # Register the tool
@@ -536,4 +519,3 @@ def _register_single_template(mcp: FastMCP, spec: Dict[str, Any]) -> None:
     )(make_tool_fn())
 
     logger.info(f"[dynamic-docx] Registered tool: {name}")
-

@@ -58,6 +58,7 @@ def _render_text(text: str, context: dict) -> str:
     """Process template syntax in text."""
     # Process {{#each items}}...{{/each}}
     each_pattern = r"\{\{#each\s+(\w+)\}\}(.*?)\{\{/each\}\}"
+
     def replace_each(match):
         key = match.group(1)
         body = match.group(2)
@@ -79,6 +80,7 @@ def _render_text(text: str, context: dict) -> str:
 
     # Process {{#if condition}}...{{/if}}
     if_pattern = r"\{\{#if\s+(\w+)\}\}(.*?)\{\{/if\}\}"
+
     def replace_if(match):
         key = match.group(1)
         body = match.group(2)
@@ -91,6 +93,7 @@ def _render_text(text: str, context: dict) -> str:
 
     # Process {{#unless condition}}...{{/unless}}
     unless_pattern = r"\{\{#unless\s+(\w+)\}\}(.*?)\{\{/unless\}\}"
+
     def replace_unless(match):
         key = match.group(1)
         body = match.group(2)
@@ -103,6 +106,7 @@ def _render_text(text: str, context: dict) -> str:
 
     # Process simple {{variable}} replacements
     simple_pattern = r"\{\{(\w+)\}\}"
+
     def replace_simple(match):
         key = match.group(1)
         return str(context.get(key, match.group(0)))

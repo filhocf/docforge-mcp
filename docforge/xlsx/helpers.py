@@ -16,7 +16,7 @@ def parse_table(lines: List[str], start_idx: int) -> Tuple[Optional[List[List[st
     # Find all consecutive table lines
     while i < len(lines):
         line = lines[i].strip()
-        if line.startswith('|') and line.endswith('|'):
+        if line.startswith("|") and line.endswith("|"):
             table_lines.append(line)
             i += 1
         else:
@@ -28,9 +28,9 @@ def parse_table(lines: List[str], start_idx: int) -> Tuple[Optional[List[List[st
     # Parse table data skipping separator row
     table_data: List[List[str]] = []
     for line in table_lines:
-        if '---' in line or ':-:' in line or ':--' in line or '--:' in line:
+        if "---" in line or ":-:" in line or ":--" in line or "--:" in line:
             continue
-        cells = [cell.strip() for cell in line.split('|')[1:-1]]
+        cells = [cell.strip() for cell in line.split("|")[1:-1]]
         table_data.append(cells)
 
     return table_data, i
@@ -41,12 +41,12 @@ def format_cell_value(value: str):
     value = value.strip()
 
     # Check if it's a formula (starts with =)
-    if value.startswith('='):
+    if value.startswith("="):
         return value
 
     # Try to convert to number
     try:
-        if value.endswith('%'):
+        if value.endswith("%"):
             return float(value[:-1]) / 100
         return float(value)
     except ValueError:
@@ -55,21 +55,21 @@ def format_cell_value(value: str):
 
 def parse_cell_formatting(cell_text: str) -> Tuple[str, Dict[str, bool]]:
     """Parse markdown formatting in cell text and return clean text and formatting info."""
-    formatting_info = {'bold': False, 'italic': False, 'monospace': False}
+    formatting_info = {"bold": False, "italic": False, "monospace": False}
     clean_text = cell_text.strip()
 
     # Bold **text**
-    if clean_text.startswith('**') and clean_text.endswith('**'):
+    if clean_text.startswith("**") and clean_text.endswith("**"):
         clean_text = clean_text[2:-2]
-        formatting_info['bold'] = True
+        formatting_info["bold"] = True
     # Italic *text*
-    elif clean_text.startswith('*') and clean_text.endswith('*'):
+    elif clean_text.startswith("*") and clean_text.endswith("*"):
         clean_text = clean_text[1:-1]
-        formatting_info['italic'] = True
+        formatting_info["italic"] = True
     # Monospace `text`
-    elif clean_text.startswith('`') and clean_text.endswith('`'):
+    elif clean_text.startswith("`") and clean_text.endswith("`"):
         clean_text = clean_text[1:-1]
-        formatting_info['monospace'] = True
+        formatting_info["monospace"] = True
 
     return clean_text, formatting_info
 
@@ -77,12 +77,12 @@ def parse_cell_formatting(cell_text: str) -> Tuple[str, Dict[str, bool]]:
 def apply_cell_formatting(cell, formatting_info: Dict[str, bool]) -> None:
     """Apply formatting information to an Excel cell."""
     current_font = cell.font
-    if formatting_info['bold']:
+    if formatting_info["bold"]:
         cell.font = Font(bold=True, color=current_font.color, size=current_font.size)
-    elif formatting_info['italic']:
+    elif formatting_info["italic"]:
         cell.font = Font(italic=True, color=current_font.color, size=current_font.size)
-    elif formatting_info['monospace']:
-        cell.font = Font(name='Courier New', color=current_font.color, size=current_font.size)
+    elif formatting_info["monospace"]:
+        cell.font = Font(name="Courier New", color=current_font.color, size=current_font.size)
 
 
 def _quote_sheet_name(name: str) -> str:
@@ -102,7 +102,7 @@ def adjust_formula_references(
 
     Also resolves cross-sheet references like ``SheetName!T1.B[0]`` → ``'SheetName'!B2``.
     """
-    if not formula.startswith('='):
+    if not formula.startswith("="):
         return formula
 
     if table_positions is None:
@@ -181,7 +181,7 @@ def adjust_formula_references(
         # ── Local (same-sheet) references ──
 
         # Table cell references e.g. T1.B[1]
-        table_pattern = r'T(\d+)\.([A-Z]+)\[([+-]?\d+)\]'
+        table_pattern = r"T(\d+)\.([A-Z]+)\[([+-]?\d+)\]"
 
         def replace_table_reference(match):
             table_num = int(match.group(1))
@@ -198,7 +198,7 @@ def adjust_formula_references(
         adjusted = re.sub(table_pattern, replace_table_reference, formula)
 
         # Table range references e.g. T1.B[0]:T1.E[0]
-        table_range_pattern = r'T(\d+)\.([A-Z]+)\[([+-]?\d+)\]:T(\d+)\.([A-Z]+)\[([+-]?\d+)\]'
+        table_range_pattern = r"T(\d+)\.([A-Z]+)\[([+-]?\d+)\]:T(\d+)\.([A-Z]+)\[([+-]?\d+)\]"
 
         def replace_table_range(match):
             start_table_num = int(match.group(1))
@@ -228,7 +228,7 @@ def adjust_formula_references(
         adjusted = re.sub(table_range_pattern, replace_table_range, adjusted)
 
         # Simplified function over table range e.g. T1.SUM(B[0]:E[0])
-        table_func_pattern = r'T(\d+)\.(SUM|AVERAGE|MAX|MIN)\(([A-Z]+)\[([+-]?\d+)\]:([A-Z]+)\[([+-]?\d+)\]\)'
+        table_func_pattern = r"T(\d+)\.(SUM|AVERAGE|MAX|MIN)\(([A-Z]+)\[([+-]?\d+)\]:([A-Z]+)\[([+-]?\d+)\]\)"
 
         def replace_table_function(match):
             table_num = int(match.group(1))
@@ -258,7 +258,7 @@ def adjust_formula_references(
                 current_table_start = table_start_row
 
         # Handle row-relative references e.g. B[0]
-        rel_pattern = r'([A-Z]+)\[([+-]?\d+)\]'
+        rel_pattern = r"([A-Z]+)\[([+-]?\d+)\]"
 
         def replace_rel(match):
             column = match.group(1)
@@ -272,7 +272,7 @@ def adjust_formula_references(
         adjusted = re.sub(rel_pattern, replace_rel, adjusted)
 
         # Row-relative range e.g. B[0]:E[0]
-        range_pattern = r'([A-Z]+)\[([+-]?\d+)\]:([A-Z]+)\[([+-]?\d+)\]'
+        range_pattern = r"([A-Z]+)\[([+-]?\d+)\]:([A-Z]+)\[([+-]?\d+)\]"
 
         def replace_range(match):
             start_col = match.group(1)
@@ -299,15 +299,15 @@ def adjust_formula_references(
 def detect_formula_pattern(value: str) -> str:
     """Detect common formula patterns in markdown and convert to Excel formulas."""
     value = value.strip()
-    if value.startswith('='):
+    if value.startswith("="):
         return value
-    if re.match(r'^(SUM|sum)\([A-Z]+\d+:[A-Z]+\d+\)$', value):
+    if re.match(r"^(SUM|sum)\([A-Z]+\d+:[A-Z]+\d+\)$", value):
         return f"={value.upper()}"
-    if re.match(r'^(AVG|avg|AVERAGE|average)\([A-Z]+\d+:[A-Z]+\d+\)$', value):
+    if re.match(r"^(AVG|avg|AVERAGE|average)\([A-Z]+\d+:[A-Z]+\d+\)$", value):
         return f"=AVERAGE({value.split('(')[1]}"
-    if re.match(r'^[A-Z]+\d+[+\-*/][A-Z]+\d+$', value):
+    if re.match(r"^[A-Z]+\d+[+\-*/][A-Z]+\d+$", value):
         return f"={value}"
-    if re.match(r'^[A-Z]+\d+/[A-Z]+\d+\*100$', value):
+    if re.match(r"^[A-Z]+\d+/[A-Z]+\d+\*100$", value):
         return f"={value}/100"
     return value
 
@@ -327,7 +327,7 @@ def add_table_to_sheet(
     header_font = Font(bold=True, color="FFFFFF")
     header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
     formula_fill = PatternFill(start_color="E7F3FF", end_color="E7F3FF", fill_type="solid")
-    border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"), bottom=Side(style="thin"))
 
     # Fill cells
     for row_idx, row_data in enumerate(table_data):
@@ -337,9 +337,9 @@ def add_table_to_sheet(
                 cell = worksheet.cell(row=current_excel_row, column=col_idx + 1)
                 clean_text, formatting_info = parse_cell_formatting(cell_text)
                 formula_value = detect_formula_pattern(clean_text)
-                is_percent = clean_text.strip().endswith('%')
+                is_percent = clean_text.strip().endswith("%")
 
-                if isinstance(formula_value, str) and formula_value.startswith('='):
+                if isinstance(formula_value, str) and formula_value.startswith("="):
                     adjusted_formula = adjust_formula_references(formula_value, current_excel_row, table_positions, all_sheet_table_positions)
                     cell.value = adjusted_formula
                     cell.fill = formula_fill
@@ -352,21 +352,21 @@ def add_table_to_sheet(
 
                 # Alignment and number formats
                 if row_idx == 0:
-                    cell.alignment = Alignment(horizontal='center')
-                elif isinstance(cell.value, (int, float)) or (isinstance(cell.value, str) and cell.value.startswith('=')):
-                    cell.alignment = Alignment(horizontal='right')
+                    cell.alignment = Alignment(horizontal="center")
+                elif isinstance(cell.value, (int, float)) or (isinstance(cell.value, str) and cell.value.startswith("=")):
+                    cell.alignment = Alignment(horizontal="right")
                 else:
-                    cell.alignment = Alignment(horizontal='left')
+                    cell.alignment = Alignment(horizontal="left")
 
                 if row_idx == 0:
                     cell.font = header_font
                     cell.fill = header_fill
                 elif isinstance(cell.value, (int, float)) and cell.value >= 1000:
-                    cell.number_format = '#,##0'
+                    cell.number_format = "#,##0"
 
                 # Apply percentage number format when the original text was a percent
                 if is_percent and isinstance(cell.value, (int, float)):
-                    cell.number_format = '0%'
+                    cell.number_format = "0%"
             except Exception as e:
                 logger.warning("Error processing cell [row=%d, col=%d]: %s", current_excel_row, col_idx + 1, e)
 

@@ -27,8 +27,13 @@ class TestCreateChart:
     def test_bar_chart_from_file(self, sample_xlsx, tmp_path):
         out = str(tmp_path / "out.xlsx")
         result = create_excel_chart(
-            file_path=sample_xlsx, chart_type="bar", title="Revenue",
-            sheet_name="Sales", data_start_column=2, data_end_column=3, output_path=out,
+            file_path=sample_xlsx,
+            chart_type="bar",
+            title="Revenue",
+            sheet_name="Sales",
+            data_start_column=2,
+            data_end_column=3,
+            output_path=out,
         )
         assert "bar" in result
         assert Path(out).exists()
@@ -38,24 +43,37 @@ class TestCreateChart:
     def test_line_chart(self, sample_xlsx, tmp_path):
         out = str(tmp_path / "out.xlsx")
         result = create_excel_chart(
-            file_path=sample_xlsx, chart_type="line", title="Trend",
-            sheet_name="Sales", data_start_column=2, output_path=out,
+            file_path=sample_xlsx,
+            chart_type="line",
+            title="Trend",
+            sheet_name="Sales",
+            data_start_column=2,
+            output_path=out,
         )
         assert "line" in result
 
     def test_pie_chart(self, sample_xlsx, tmp_path):
         out = str(tmp_path / "out.xlsx")
         result = create_excel_chart(
-            file_path=sample_xlsx, chart_type="pie", title="Distribution",
-            sheet_name="Sales", data_start_column=2, output_path=out,
+            file_path=sample_xlsx,
+            chart_type="pie",
+            title="Distribution",
+            sheet_name="Sales",
+            data_start_column=2,
+            output_path=out,
         )
         assert "pie" in result
 
     def test_column_chart(self, sample_xlsx, tmp_path):
         out = str(tmp_path / "out.xlsx")
         result = create_excel_chart(
-            file_path=sample_xlsx, chart_type="column", title="Comparison",
-            sheet_name="Sales", data_start_column=2, data_end_column=3, output_path=out,
+            file_path=sample_xlsx,
+            chart_type="column",
+            title="Comparison",
+            sheet_name="Sales",
+            data_start_column=2,
+            data_end_column=3,
+            output_path=out,
         )
         assert "column" in result
 
@@ -68,8 +86,10 @@ class TestCreateChart:
             ["Widget C", 800],
         ]
         result = create_excel_chart(
-            chart_type="bar", title="Product Sales",
-            inline_data=data, output_path=out,
+            chart_type="bar",
+            title="Product Sales",
+            inline_data=data,
+            output_path=out,
         )
         assert Path(out).exists()
         wb = load_workbook(out)
@@ -86,8 +106,13 @@ class TestCreateChart:
     def test_multi_series(self, sample_xlsx, tmp_path):
         out = str(tmp_path / "out.xlsx")
         result = create_excel_chart(
-            file_path=sample_xlsx, chart_type="bar", title="Multi",
-            sheet_name="Sales", data_start_column=2, data_end_column=3, output_path=out,
+            file_path=sample_xlsx,
+            chart_type="bar",
+            title="Multi",
+            sheet_name="Sales",
+            data_start_column=2,
+            data_end_column=3,
+            output_path=out,
         )
         assert "Multi" in result
         wb = load_workbook(out)

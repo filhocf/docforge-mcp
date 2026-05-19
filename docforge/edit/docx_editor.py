@@ -7,7 +7,7 @@ def edit_docx_paragraph(file_path: str, index: int, new_text: str, output_path: 
     """Edit a paragraph at the given index, preserving style."""
     doc = Document(file_path)
     if index < 0 or index >= len(doc.paragraphs):
-        raise ValueError(f"Paragraph index {index} out of range (0-{len(doc.paragraphs)-1})")
+        raise ValueError(f"Paragraph index {index} out of range (0-{len(doc.paragraphs) - 1})")
 
     para = doc.paragraphs[index]
     # Preserve style
@@ -26,7 +26,7 @@ def delete_docx_paragraph(file_path: str, index: int, output_path: str | None = 
     """Delete a paragraph at the given index."""
     doc = Document(file_path)
     if index < 0 or index >= len(doc.paragraphs):
-        raise ValueError(f"Paragraph index {index} out of range (0-{len(doc.paragraphs)-1})")
+        raise ValueError(f"Paragraph index {index} out of range (0-{len(doc.paragraphs) - 1})")
 
     para = doc.paragraphs[index]
     p_element = para._element
@@ -76,7 +76,6 @@ def insert_docx_paragraph(file_path: str, index: int, text: str, style: str = "N
         ref_element = doc.paragraphs[index]._element
     else:
         ref_element = None
-
 
     new_para = doc.add_paragraph(text, style=style)
     new_element = new_para._element

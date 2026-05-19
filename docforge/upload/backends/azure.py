@@ -40,11 +40,7 @@ def upload_to_azure(file_object, file_name: str, azcfg, signed_url_expires_in: i
         # Upload the blob
         blob_client = container_client.get_blob_client(file_name)
         file_object.seek(0)
-        blob_client.upload_blob(
-            file_object,
-            overwrite=True,
-            content_settings=ContentSettings(content_type=content_type)
-        )
+        blob_client.upload_blob(file_object, overwrite=True, content_settings=ContentSettings(content_type=content_type))
 
         # Generate a SAS token for read access
         expiry_time = datetime.now(timezone.utc) + timedelta(seconds=signed_url_expires_in)
@@ -63,4 +59,3 @@ def upload_to_azure(file_object, file_name: str, azcfg, signed_url_expires_in: i
     except Exception as e:
         logger.error(f"Error uploading to Azure Blob Storage: {e}")
         return None
-
