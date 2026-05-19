@@ -4,21 +4,15 @@ These tests verify that the markdown to Excel conversion handles
 the '## Sheet: Name' heading syntax correctly for multi-sheet workbooks.
 """
 
-import sys
+import io
 from pathlib import Path
 from unittest.mock import patch
-
-# Add project root to path for imports
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
-
-import io
 
 import pytest
 from openpyxl import Workbook, load_workbook
 
 # We test the internal parsing logic, mocking the upload step.
-from xlsx_tools.base_xlsx_tool import markdown_to_excel
+from docforge.xlsx.base_xlsx_tool import markdown_to_excel
 
 
 def _create_workbook_from_markdown(markdown_content: str) -> Workbook:
@@ -33,7 +27,7 @@ def _create_workbook_from_markdown(markdown_content: str) -> Workbook:
         file_obj.seek(0)
         return "https://fake-url/test.xlsx"
 
-    with patch("xlsx_tools.base_xlsx_tool.upload_file", side_effect=fake_upload):
+    with patch("docforge.xlsx.base_xlsx_tool.upload_file", side_effect=fake_upload):
         markdown_to_excel(markdown_content)
 
     wb = load_workbook(io.BytesIO(captured['data']))
@@ -326,7 +320,7 @@ class TestAdjustFormulaReferencesUnit:
     """Unit tests for adjust_formula_references with cross-sheet support."""
 
     def test_cross_sheet_single_cell(self):
-        from xlsx_tools.helpers import adjust_formula_references
+        from docforge.xlsx.helpers import adjust_formula_references
         all_positions = {"Revenue": {"T1": 1}}
         result = adjust_formula_references(
             "=Revenue!T1.B[0]", 10, {}, all_positions
@@ -334,7 +328,7 @@ class TestAdjustFormulaReferencesUnit:
         assert result == "=Revenue!B2"
 
     def test_cross_sheet_quoted_name(self):
-        from xlsx_tools.helpers import adjust_formula_references
+        from docforge.xlsx.helpers import adjust_formula_references
         all_positions = {"My Sheet": {"T1": 1}}
         result = adjust_formula_references(
             "=My Sheet!T1.A[2]", 10, {}, all_positions
@@ -342,7 +336,7 @@ class TestAdjustFormulaReferencesUnit:
         assert result == "='My Sheet'!A4"
 
     def test_cross_sheet_range(self):
-        from xlsx_tools.helpers import adjust_formula_references
+        from docforge.xlsx.helpers import adjust_formula_references
         all_positions = {"Data": {"T1": 1}}
         result = adjust_formula_references(
             "=SUM(Data!T1.B[0]:T1.B[4])", 10, {}, all_positions
@@ -350,7 +344,7 @@ class TestAdjustFormulaReferencesUnit:
         assert result == "=SUM(Data!B2:B6)"
 
     def test_cross_sheet_function_pattern(self):
-        from xlsx_tools.helpers import adjust_formula_references
+        from docforge.xlsx.helpers import adjust_formula_references
         all_positions = {"Sales": {"T1": 3}}
         result = adjust_formula_references(
             "=Sales!T1.SUM(B[0]:D[0])", 10, {}, all_positions
@@ -359,14 +353,14 @@ class TestAdjustFormulaReferencesUnit:
         assert result == "=SUM(Sales!B4:Sales!D4)"
 
     def test_local_reference_still_works(self):
-        from xlsx_tools.helpers import adjust_formula_references
+        from docforge.xlsx.helpers import adjust_formula_references
         result = adjust_formula_references(
             "=T1.B[0]", 5, {"T1": 1}, {}
         )
         assert result == "=B2"
 
     def test_mixed_local_and_cross_sheet(self):
-        from xlsx_tools.helpers import adjust_formula_references
+        from docforge.xlsx.helpers import adjust_formula_references
         all_positions = {"Revenue": {"T1": 1}}
         result = adjust_formula_references(
             "=Revenue!T1.B[0]-B[0]", 5, {"T1": 3}, all_positions

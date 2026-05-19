@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 from docx import Document
 
-from pdf_tools.base_pdf_tool import MarkdownPDF, docx_to_pdf, markdown_to_pdf
+from docforge.pdf.base_pdf_tool import MarkdownPDF, docx_to_pdf, markdown_to_pdf
 
 
 class TestMarkdownPDF:
@@ -56,7 +56,7 @@ Final thoughts here.
 
 
 class TestMarkdownToPdf:
-    @patch("pdf_tools.base_pdf_tool.upload_file")
+    @patch("docforge.pdf.base_pdf_tool.upload_file")
     def test_markdown_to_pdf(self, mock_upload):
         mock_upload.return_value = "/output/test.pdf"
         result = markdown_to_pdf("# Hello\n\nWorld", file_name="test")
@@ -68,7 +68,7 @@ class TestMarkdownToPdf:
         buffer.seek(0)
         assert buffer.read(4) == b"%PDF"
 
-    @patch("pdf_tools.base_pdf_tool.upload_file")
+    @patch("docforge.pdf.base_pdf_tool.upload_file")
     def test_markdown_to_pdf_no_name(self, mock_upload):
         mock_upload.return_value = "/output/random.pdf"
         result = markdown_to_pdf("Content here")
@@ -76,7 +76,7 @@ class TestMarkdownToPdf:
 
 
 class TestDocxToPdf:
-    @patch("pdf_tools.base_pdf_tool.upload_file")
+    @patch("docforge.pdf.base_pdf_tool.upload_file")
     def test_docx_to_pdf(self, mock_upload, tmp_path):
         # Create sample docx
         path = str(tmp_path / "test.docx")
@@ -94,7 +94,7 @@ class TestDocxToPdf:
         buffer.seek(0)
         assert buffer.read(4) == b"%PDF"
 
-    @patch("pdf_tools.base_pdf_tool.upload_file")
+    @patch("docforge.pdf.base_pdf_tool.upload_file")
     def test_docx_to_pdf_auto_name(self, mock_upload, tmp_path):
         path = str(tmp_path / "myreport.docx")
         doc = Document()

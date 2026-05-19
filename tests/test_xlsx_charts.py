@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from openpyxl import Workbook, load_workbook
 
-from xlsx_tools.charts import create_excel_chart
+from docforge.xlsx.charts import create_excel_chart
 
 
 @pytest.fixture

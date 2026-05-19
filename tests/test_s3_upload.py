@@ -13,13 +13,7 @@ Also verifies validation rules:
 """
 
 import os
-import sys
-from pathlib import Path
 from unittest.mock import MagicMock, patch
-
-# Add project root to path for imports
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
 
 import pytest
 
@@ -196,7 +190,7 @@ class TestS3ClientCreation:
 
         mock_client = MagicMock()
         with patch("boto3.client", return_value=mock_client) as patched:
-            from upload_tools.backends.s3 import _create_s3_client
+            from docforge.upload.backends.s3 import _create_s3_client
             result = _create_s3_client(cfg.storage.s3)
 
             patched.assert_called_once_with(
@@ -215,7 +209,7 @@ class TestS3ClientCreation:
 
         mock_client = MagicMock()
         with patch("boto3.client", return_value=mock_client) as patched:
-            from upload_tools.backends.s3 import _create_s3_client
+            from docforge.upload.backends.s3 import _create_s3_client
             result = _create_s3_client(cfg.storage.s3)
 
             patched.assert_called_once_with('s3')
@@ -228,7 +222,7 @@ class TestS3ClientCreation:
 
         mock_client = MagicMock()
         with patch("boto3.client", return_value=mock_client) as patched:
-            from upload_tools.backends.s3 import _create_s3_client
+            from docforge.upload.backends.s3 import _create_s3_client
             result = _create_s3_client(cfg.storage.s3)
 
             patched.assert_called_once_with('s3', region_name="ap-southeast-1")
@@ -246,7 +240,7 @@ class TestUploadToS3:
         """Successful upload should return a string with the presigned URL."""
         from io import BytesIO
 
-        from upload_tools.backends.s3 import upload_to_s3
+        from docforge.upload.backends.s3 import upload_to_s3
 
         env = _build_env(S3_BUCKET="upload-bucket")
         cfg = _get_fresh_config(env)
@@ -254,7 +248,7 @@ class TestUploadToS3:
         mock_client = MagicMock()
         mock_client.generate_presigned_url.return_value = "https://s3.amazonaws.com/upload-bucket/test.docx?signed"
 
-        with patch("upload_tools.backends.s3._create_s3_client", return_value=mock_client):
+        with patch("docforge.upload.backends.s3._create_s3_client", return_value=mock_client):
             file_obj = BytesIO(b"test content")
             result = upload_to_s3(file_obj, "test.docx", cfg.storage.s3, 3600)
 
@@ -273,7 +267,7 @@ class TestUploadToS3:
         """upload_to_s3 should return None when s3cfg is None."""
         from io import BytesIO
 
-        from upload_tools.backends.s3 import upload_to_s3
+        from docforge.upload.backends.s3 import upload_to_s3
 
         result = upload_to_s3(BytesIO(b"data"), "file.docx", None, 3600)
         assert result is None
@@ -284,7 +278,7 @@ class TestUploadToS3:
 
         from botocore.exceptions import NoCredentialsError
 
-        from upload_tools.backends.s3 import upload_to_s3
+        from docforge.upload.backends.s3 import upload_to_s3
 
         env = _build_env(S3_BUCKET="no-creds-bucket")
         cfg = _get_fresh_config(env)
@@ -292,7 +286,7 @@ class TestUploadToS3:
         mock_client = MagicMock()
         mock_client.upload_fileobj.side_effect = NoCredentialsError()
 
-        with patch("upload_tools.backends.s3._create_s3_client", return_value=mock_client):
+        with patch("docforge.upload.backends.s3._create_s3_client", return_value=mock_client):
             result = upload_to_s3(BytesIO(b"data"), "file.docx", cfg.storage.s3, 3600)
 
         assert result is None
@@ -303,7 +297,7 @@ class TestUploadToS3:
 
         from botocore.exceptions import ClientError
 
-        from upload_tools.backends.s3 import upload_to_s3
+        from docforge.upload.backends.s3 import upload_to_s3
 
         env = _build_env(S3_BUCKET="error-bucket")
         cfg = _get_fresh_config(env)
@@ -314,7 +308,7 @@ class TestUploadToS3:
             "PutObject",
         )
 
-        with patch("upload_tools.backends.s3._create_s3_client", return_value=mock_client):
+        with patch("docforge.upload.backends.s3._create_s3_client", return_value=mock_client):
             result = upload_to_s3(BytesIO(b"data"), "file.docx", cfg.storage.s3, 3600)
 
         assert result is None

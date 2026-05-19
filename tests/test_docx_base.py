@@ -6,20 +6,14 @@ including headers, lists, tables, formatting, links, and block quotes.
 Output files are saved to tests/output/docx/ directory for manual inspection.
 """
 
-import sys
-from pathlib import Path
-
-# Add project root to path for imports
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
-
 import re
+from pathlib import Path
 
 import pytest
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-from docx_tools.helpers import (
+from docforge.docx.helpers import (
     HORIZONTAL_LINE_PATTERN,
     IMAGE_PATTERN,
     PAGE_BREAK_PATTERN,

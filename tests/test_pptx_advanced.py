@@ -4,7 +4,7 @@
 import pytest
 from pptx import Presentation
 
-from pptx_tools.advanced import add_shape_to_slide, apply_slide_template, duplicate_slide, open_pptx_and_edit
+from docforge.pptx.advanced import add_shape_to_slide, apply_slide_template, duplicate_slide, open_pptx_and_edit
 
 
 @pytest.fixture

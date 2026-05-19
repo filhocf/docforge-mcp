@@ -6,7 +6,7 @@ import pytest
 from docx import Document
 from pptx import Presentation
 
-from merge_tools import merge_docx, merge_pptx
+from docforge.merge import merge_docx, merge_pptx
 
 
 @pytest.fixture

@@ -11,18 +11,12 @@ Covers:
 """
 
 import os
-import sys
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
-
-# Add project root to path for imports
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
 
 import pytest
 from fastmcp.exceptions import AuthorizationError
 
-from middleware import ApiKeyAuthMiddleware
+from docforge.middleware import ApiKeyAuthMiddleware
 
 # ======================================================================
 # Key extraction
@@ -137,7 +131,7 @@ class TestOnRequest:
         call_next = AsyncMock(return_value="ok")
         context = _make_context()
 
-        with patch("middleware.get_http_headers", return_value={"Authorization": "Bearer secret-123"}):
+        with patch("docforge.middleware.get_http_headers", return_value={"Authorization": "Bearer secret-123"}):
             result = await mw.on_request(context, call_next)
 
         call_next.assert_awaited_once_with(context)
@@ -148,7 +142,7 @@ class TestOnRequest:
         call_next = AsyncMock(return_value="ok")
         context = _make_context()
 
-        with patch("middleware.get_http_headers", return_value={"x-api-key": "secret-123"}):
+        with patch("docforge.middleware.get_http_headers", return_value={"x-api-key": "secret-123"}):
             result = await mw.on_request(context, call_next)
 
         call_next.assert_awaited_once_with(context)
@@ -159,7 +153,7 @@ class TestOnRequest:
         call_next = AsyncMock(return_value="ok")
         context = _make_context()
 
-        with patch("middleware.get_http_headers", return_value={"Authorization": "secret-123"}):
+        with patch("docforge.middleware.get_http_headers", return_value={"Authorization": "secret-123"}):
             result = await mw.on_request(context, call_next)
 
         call_next.assert_awaited_once_with(context)
@@ -170,7 +164,7 @@ class TestOnRequest:
         call_next = AsyncMock()
         context = _make_context()
 
-        with patch("middleware.get_http_headers", return_value={}):
+        with patch("docforge.middleware.get_http_headers", return_value={}):
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
@@ -181,7 +175,7 @@ class TestOnRequest:
         call_next = AsyncMock()
         context = _make_context()
 
-        with patch("middleware.get_http_headers", return_value={"Authorization": "Bearer wrong-key"}):
+        with patch("docforge.middleware.get_http_headers", return_value={"Authorization": "Bearer wrong-key"}):
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
@@ -193,7 +187,7 @@ class TestOnRequest:
         call_next = AsyncMock()
         context = _make_context()
 
-        with patch("middleware.get_http_headers", return_value=None):
+        with patch("docforge.middleware.get_http_headers", return_value=None):
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
@@ -205,8 +199,8 @@ class TestOnRequest:
         call_next = AsyncMock(return_value="ok")
         context = _make_context()
 
-        with patch("middleware.get_http_headers", return_value={"x-api-key": "secret-123"}), \
-             patch("middleware.secrets.compare_digest", return_value=True) as mock_compare:
+        with patch("docforge.middleware.get_http_headers", return_value={"x-api-key": "secret-123"}), \
+             patch("docforge.middleware.secrets.compare_digest", return_value=True) as mock_compare:
             await mw.on_request(context, call_next)
 
         mock_compare.assert_called_once_with("secret-123", "secret-123")
@@ -219,7 +213,7 @@ class TestOnRequest:
 
         assert mw._failed_attempts == 0
 
-        with patch("middleware.get_http_headers", return_value={"x-api-key": "wrong"}):
+        with patch("docforge.middleware.get_http_headers", return_value={"x-api-key": "wrong"}):
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
@@ -238,8 +232,8 @@ class TestOnRequest:
         import time as _time
         mw._last_warn_time = _time.monotonic()
 
-        with patch("middleware.get_http_headers", return_value={}), \
-             patch("middleware.logger") as mock_logger:
+        with patch("docforge.middleware.get_http_headers", return_value={}), \
+             patch("docforge.middleware.logger") as mock_logger:
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
@@ -260,8 +254,8 @@ class TestOnRequest:
         mw._last_warn_time = 0.0
         mw._failed_attempts = 5  # accumulated silently
 
-        with patch("middleware.get_http_headers", return_value={}), \
-             patch("middleware.logger") as mock_logger:
+        with patch("docforge.middleware.get_http_headers", return_value={}), \
+             patch("docforge.middleware.logger") as mock_logger:
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
@@ -285,7 +279,7 @@ class TestConfigApiKey:
             "API_KEY": "env-secret-key",
         }
         with patch.dict(os.environ, env, clear=True):
-            from config import Config
+            from docforge.config import Config
             cfg = Config.from_env()
         assert cfg.api_key == "env-secret-key"
 
@@ -296,7 +290,7 @@ class TestConfigApiKey:
             "API_KEY": "",
         }
         with patch.dict(os.environ, env, clear=True):
-            from config import Config
+            from docforge.config import Config
             cfg = Config.from_env()
         assert cfg.api_key is None
 
@@ -306,7 +300,7 @@ class TestConfigApiKey:
             "UPLOAD_STRATEGY": "LOCAL",
         }
         with patch.dict(os.environ, env, clear=True):
-            from config import Config
+            from docforge.config import Config
             cfg = Config.from_env()
         assert cfg.api_key is None
 
@@ -317,7 +311,7 @@ class TestConfigApiKey:
             "API_KEY": "   ",
         }
         with patch.dict(os.environ, env, clear=True):
-            from config import Config
+            from docforge.config import Config
             cfg = Config.from_env()
         assert cfg.api_key is None
 
@@ -328,7 +322,7 @@ class TestConfigApiKey:
             "API_KEY": "  spaced-key  ",
         }
         with patch.dict(os.environ, env, clear=True):
-            from config import Config
+            from docforge.config import Config
             cfg = Config.from_env()
         assert cfg.api_key == "spaced-key"
 

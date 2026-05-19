@@ -5,7 +5,7 @@ from docx import Document
 from openpyxl import Workbook
 from pptx import Presentation
 
-from read_tools import (
+from docforge.read import (
     get_docx_info,
     get_docx_paragraphs,
     get_docx_tables,

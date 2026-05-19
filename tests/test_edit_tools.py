@@ -5,7 +5,7 @@ from docx import Document
 from openpyxl import Workbook, load_workbook
 from pptx import Presentation
 
-from edit_tools import (
+from docforge.edit import (
     delete_docx_paragraph,
     delete_pptx_slide,
     delete_xlsx_row,

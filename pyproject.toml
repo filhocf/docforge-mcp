@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "docforge-mcp"
-version = "0.1.0"
+version = "0.2.0"
 description = "MCP server for complete Office document manipulation — create, read, edit, convert DOCX/XLSX/PPTX/PDF/EML"
 readme = "Readme.md"
 license = "MIT"
@@ -54,8 +54,8 @@ dev = [
 ]
 
 [project.scripts]
-docforge-mcp = "mcp_office_documents.server:main"
-mcp-ms-office-documents = "mcp_office_documents.server:main"  # backward compat
+docforge-mcp = "docforge.server:main"
+mcp-ms-office-documents = "docforge.server:main"  # backward compat
 
 [project.urls]
 Homepage = "https://github.com/filhocf/docforge-mcp"
@@ -63,12 +63,7 @@ Repository = "https://github.com/filhocf/docforge-mcp"
 Issues = "https://github.com/filhocf/docforge-mcp/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["mcp_office_documents", "docx_tools", "xlsx_tools", "pptx_tools", "email_tools", "xml_tools", "upload_tools", "read_tools", "edit_tools", "pdf_tools", "merge_tools"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"config.py" = "config.py"
-"template_utils.py" = "template_utils.py"
-"middleware.py" = "middleware.py"
+packages = ["docforge"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

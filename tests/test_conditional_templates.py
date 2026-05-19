@@ -3,7 +3,7 @@
 from docx import Document
 from pptx import Presentation
 
-from docx_tools.conditional_templates import _render_text, render_docx_template, render_pptx_template
+from docforge.docx.conditional_templates import _render_text, render_docx_template, render_pptx_template
 
 
 class TestRenderText:

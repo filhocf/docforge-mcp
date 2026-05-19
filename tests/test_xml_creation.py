@@ -6,17 +6,11 @@ and security protection against malicious XML content.
 """
 
 import io
-import sys
-from pathlib import Path
 from unittest.mock import patch
-
-# Add project root to path for imports
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
 
 import pytest
 
-from xml_tools.base_xml_tool import (
+from docforge.xml.base_xml_tool import (
     XMLFileCreationError,
     XMLValidationError,
     create_xml_file,
@@ -134,7 +128,7 @@ class TestValidateXml:
 class TestCreateXmlFile:
     """Tests for the create_xml_file function."""
 
-    @patch('xml_tools.base_xml_tool.upload_file')
+    @patch('docforge.xml.base_xml_tool.upload_file')
     def test_create_xml_file_success(self, mock_upload):
         """Test successful XML file creation."""
         mock_upload.return_value = "http://example.com/file.xml"
@@ -149,7 +143,7 @@ class TestCreateXmlFile:
         assert call_args[0][1] == "xml"
         assert isinstance(call_args[0][0], io.BytesIO)
 
-    @patch('xml_tools.base_xml_tool.upload_file')
+    @patch('docforge.xml.base_xml_tool.upload_file')
     def test_create_xml_file_adds_declaration(self, mock_upload):
         """Test that XML declaration is added when not present."""
         captured_content = {}
@@ -167,7 +161,7 @@ class TestCreateXmlFile:
         assert content.startswith('<?xml version="1.0" encoding="UTF-8"?>')
         assert "<root><child>Hello</child></root>" in content
 
-    @patch('xml_tools.base_xml_tool.upload_file')
+    @patch('docforge.xml.base_xml_tool.upload_file')
     def test_create_xml_file_preserves_existing_declaration(self, mock_upload):
         """Test that existing XML declaration is preserved."""
         captured_content = {}
@@ -185,7 +179,7 @@ class TestCreateXmlFile:
         # Should not have duplicate declarations
         assert content.count('<?xml') == 1
 
-    @patch('xml_tools.base_xml_tool.upload_file')
+    @patch('docforge.xml.base_xml_tool.upload_file')
     def test_create_xml_file_respects_encoding(self, mock_upload):
         """Test that declared encoding is respected."""
         captured_content = {}
@@ -204,7 +198,7 @@ class TestCreateXmlFile:
         content = captured_content['data'].decode('ISO-8859-1')
         assert 'Héllo' in content
 
-    @patch('xml_tools.base_xml_tool.upload_file')
+    @patch('docforge.xml.base_xml_tool.upload_file')
     def test_create_xml_file_strips_whitespace(self, mock_upload):
         """Test that leading/trailing whitespace is stripped."""
         captured_content = {}
@@ -241,7 +235,7 @@ class TestCreateXmlFile:
         with pytest.raises(XMLValidationError):
             create_xml_file("   \n\t  ")
 
-    @patch('xml_tools.base_xml_tool.upload_file')
+    @patch('docforge.xml.base_xml_tool.upload_file')
     def test_create_xml_file_upload_error_raises_exception(self, mock_upload):
         """Test that upload errors raise XMLFileCreationError."""
         mock_upload.side_effect = Exception("Upload failed")
@@ -252,7 +246,7 @@ class TestCreateXmlFile:
 
         assert "Error creating XML file" in str(exc_info.value)
 
-    @patch('xml_tools.base_xml_tool.upload_file')
+    @patch('docforge.xml.base_xml_tool.upload_file')
     def test_create_xml_file_closes_buffer(self, mock_upload):
         """Test that BytesIO buffer is closed after upload."""
         mock_upload.return_value = "http://example.com/file.xml"
@@ -301,18 +295,18 @@ class TestXmlExceptionExports:
     """Tests to verify exceptions are properly exported."""
 
     def test_xml_validation_error_importable(self):
-        """Test that XMLValidationError can be imported from xml_tools."""
-        from xml_tools import XMLValidationError
+        """Test that XMLValidationError can be imported from docforge.xml."""
+        from docforge.xml import XMLValidationError
         assert XMLValidationError is not None
 
     def test_xml_file_creation_error_importable(self):
-        """Test that XMLFileCreationError can be imported from xml_tools."""
-        from xml_tools import XMLFileCreationError
+        """Test that XMLFileCreationError can be imported from docforge.xml."""
+        from docforge.xml import XMLFileCreationError
         assert XMLFileCreationError is not None
 
     def test_create_xml_file_importable(self):
-        """Test that create_xml_file can be imported from xml_tools."""
-        from xml_tools import create_xml_file
+        """Test that create_xml_file can be imported from docforge.xml."""
+        from docforge.xml import create_xml_file
         assert create_xml_file is not None
 
 

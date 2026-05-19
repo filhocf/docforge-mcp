@@ -4,16 +4,11 @@ These tests create actual .pptx files and save them to disk for manual inspectio
 Output files are saved to tests/output/pptx/ directory.
 """
 
-import sys
 from pathlib import Path
-
-# Add project root to path for imports
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
 
 import pytest
 
-from pptx_tools.slide_builder import PowerpointPresentation
+from docforge.pptx.slide_builder import PowerpointPresentation
 
 # Output directory for test files
 OUTPUT_DIR = Path(__file__).parent / "output" / "pptx"

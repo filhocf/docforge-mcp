@@ -4,7 +4,7 @@
 import pytest
 from openpyxl import Workbook, load_workbook
 
-from xlsx_tools.formatting import apply_excel_formatting
+from docforge.xlsx.formatting import apply_excel_formatting
 
 
 @pytest.fixture

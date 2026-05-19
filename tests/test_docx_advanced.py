@@ -6,7 +6,7 @@ import pytest
 from docx import Document
 from docx.shared import Cm
 
-from docx_tools.advanced import (
+from docforge.docx.advanced import (
     add_bullet_list,
     add_header_footer,
     add_image_to_docx,
