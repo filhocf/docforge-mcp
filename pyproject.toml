@@ -3,17 +3,16 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mcp-ms-office-documents"
+name = "docforge-mcp"
 version = "0.1.0"
-description = "MCP server for creating, reading, and manipulating Office documents (DOCX, XLSX, PPTX, PDF, Email)"
+description = "MCP server for complete Office document manipulation — create, read, edit, convert DOCX/XLSX/PPTX/PDF/EML"
 readme = "Readme.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
-    { name = "ForLegalAI" },
-    { name = "filhocf", email = "filhocf@gmail.com" },
+    { name = "Claudio Ferreira Filho", email = "filhocf@gmail.com" },
 ]
-keywords = ["mcp", "office", "docx", "xlsx", "pptx", "pdf", "documents"]
+keywords = ["mcp", "office", "docx", "xlsx", "pptx", "pdf", "documents", "docforge"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -55,7 +54,8 @@ dev = [
 ]
 
 [project.scripts]
-mcp-ms-office-documents = "mcp_office_documents.server:main"
+docforge-mcp = "mcp_office_documents.server:main"
+mcp-ms-office-documents = "mcp_office_documents.server:main"  # backward compat
 
 [project.urls]
 Homepage = "https://github.com/ForLegalAI/mcp-ms-office-documents"
