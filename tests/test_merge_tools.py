@@ -1,9 +1,10 @@
 """Tests for merge tools."""
 
+from pathlib import Path
+
 import pytest
 from docx import Document
 from pptx import Presentation
-from pathlib import Path
 
 from merge_tools import merge_docx, merge_pptx
 

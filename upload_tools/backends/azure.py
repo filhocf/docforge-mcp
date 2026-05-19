@@ -1,5 +1,6 @@
 import logging
-from datetime import timedelta, datetime, timezone
+from datetime import datetime, timedelta, timezone
+
 from ..utils import get_content_type
 
 logger = logging.getLogger(__name__)
@@ -15,10 +16,10 @@ def upload_to_azure(file_object, file_name: str, azcfg, signed_url_expires_in: i
     try:
         # Import here to avoid requiring azure-storage-blob unless AZURE strategy is used
         from azure.storage.blob import (
-            BlobServiceClient,
-            generate_blob_sas,
             BlobSasPermissions,
+            BlobServiceClient,
             ContentSettings,
+            generate_blob_sas,
         )
     except ImportError:
         logger.error("azure-storage-blob is not installed. Please add it to requirements and install.")

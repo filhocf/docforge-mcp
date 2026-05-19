@@ -1,8 +1,8 @@
 """Tests for XLSX conditional formatting."""
 
+
 import pytest
 from openpyxl import Workbook, load_workbook
-from pathlib import Path
 
 from xlsx_tools.formatting import apply_excel_formatting
 

@@ -13,17 +13,16 @@ Covers:
 import os
 import sys
 from pathlib import Path
-from unittest.mock import patch, AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 import pytest
-
-from middleware import ApiKeyAuthMiddleware
 from fastmcp.exceptions import AuthorizationError
 
+from middleware import ApiKeyAuthMiddleware
 
 # ======================================================================
 # Key extraction

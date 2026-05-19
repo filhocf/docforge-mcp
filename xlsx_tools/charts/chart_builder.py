@@ -2,8 +2,6 @@
 
 from openpyxl import Workbook, load_workbook
 from openpyxl.chart import BarChart, LineChart, PieChart, Reference
-from openpyxl.utils import get_column_letter
-
 
 CHART_TYPES = {
     "bar": BarChart,
@@ -105,6 +103,7 @@ def create_excel_chart(
     else:
         # Upload via upload_tools
         import io
+
         from upload_tools.main import upload_file
         buffer = io.BytesIO()
         wb.save(buffer)

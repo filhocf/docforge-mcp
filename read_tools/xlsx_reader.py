@@ -1,6 +1,7 @@
 """Read and extract content from existing XLSX files."""
 
 from pathlib import Path
+
 from openpyxl import load_workbook
 
 

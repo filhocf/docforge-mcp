@@ -1,8 +1,9 @@
 """Tests for Excel chart generation."""
 
+from pathlib import Path
+
 import pytest
 from openpyxl import Workbook, load_workbook
-from pathlib import Path
 
 from xlsx_tools.charts import create_excel_chart
 

@@ -13,27 +13,28 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+import re
+
 import pytest
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 from docx_tools.helpers import (
-    parse_inline_formatting,
-    load_templates,
-    parse_table,
-    add_table_to_doc,
-    process_list_items,
-    add_horizontal_line,
-    add_image_to_doc,
+    HORIZONTAL_LINE_PATTERN,
     IMAGE_PATTERN,
     PAGE_BREAK_PATTERN,
-    HORIZONTAL_LINE_PATTERN,
-    detect_alignment,
-    process_alignment_block,
-    set_header_footer,
+    add_horizontal_line,
+    add_image_to_doc,
+    add_table_to_doc,
     add_toc,
+    detect_alignment,
+    load_templates,
+    parse_inline_formatting,
+    parse_table,
+    process_alignment_block,
+    process_list_items,
+    set_header_footer,
 )
-import re
 
 # Output directory for test files
 OUTPUT_DIR = Path(__file__).parent / "output" / "docx"

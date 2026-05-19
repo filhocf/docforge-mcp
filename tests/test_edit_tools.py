@@ -6,9 +6,16 @@ from openpyxl import Workbook, load_workbook
 from pptx import Presentation
 
 from edit_tools import (
-    edit_docx_paragraph, delete_docx_paragraph, search_replace_docx, insert_docx_paragraph,
-    edit_xlsx_cell, insert_xlsx_row, delete_xlsx_row,
-    edit_pptx_slide_text, delete_pptx_slide, reorder_pptx_slides,
+    delete_docx_paragraph,
+    delete_pptx_slide,
+    delete_xlsx_row,
+    edit_docx_paragraph,
+    edit_pptx_slide_text,
+    edit_xlsx_cell,
+    insert_docx_paragraph,
+    insert_xlsx_row,
+    reorder_pptx_slides,
+    search_replace_docx,
 )
 
 

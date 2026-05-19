@@ -1,32 +1,24 @@
-# MEMORY.md — mcp-ms-office-documents
+# MEMORY.md — docforge-mcp
 
-## Estado Atual
+## Estado Atual (19/mai/2026)
 
-- **Fork**: filhocf/mcp-ms-office-documents
-- **Upstream**: ForLegalAI/mcp-ms-office-documents
-- **Branch**: master
-- **10 issues criadas** (#1-#10)
-- **Upstream aprovado**: #55 (templates DOCX+PPTX), #56 (PyPI publish)
-- **Próximo**: Sprint 0 (#1) — pyproject.toml + CI/CD
+- **Versão**: 0.1.0 (pre-release, não publicado no PyPI ainda)
+- **Repo**: https://github.com/filhocf/docforge-mcp
+- **Origem**: Fork de ForLegalAI/mcp-ms-office-documents (MIT), divergiu em escopo
+- **Status**: Funcional, 38 tools, 16 arquivos de teste, CI ativo
 
-## Contexto Técnico
+## Pendente
 
-- Stack: Python + FastMCP 3.2 + python-docx + python-pptx + openpyxl
-- Testes: 285 passando (pytest, 6s)
-- CI: GitHub Actions (ci.yml) — atualmente só workflow_dispatch
-- Roda em: Streamable HTTP porta 8958
-- Venv local: ~/git/mcp-ms-office-documents/.venv
-
-## Upstream Maintainer
-
-- User: dvejsada
-- Receptivo: sim (respondeu <12h)
-- Preferência: tool schema limitado (evitar LLMs errando com modelos menores)
-- Aprovações: templates DOCX (#55.1), templates PPTX (#55.3), PyPI (#56)
-- Pendente: XLSX formatting (#55.2) — proposta de rules array enviada
+- [ ] Tag v0.1.0 + publish PyPI (trusted publisher)
+- [ ] Configurar PyPI trusted publisher no GitHub
+- [ ] Atualizar mcp.json local (substituir mcp-ms-office-documents)
+- [ ] Atualizar systemd service (porta 8958)
+- [ ] Gemini Code Assist ativar no repo
 
 ## Decisões
 
-- Implementar tudo no fork primeiro, submeter upstream depois
-- Cada feature = 1 issue + 1 branch + 1 PR
-- Se upstream não aceitar algo, mantemos no fork
+- Nome: docforge-mcp (PyPI livre, domínio claro)
+- Filosofia: ecossistema completo (criar+ler+editar+converter) vs upstream one-shot
+- Manter PRs #57/#58/#59 no upstream como contribuição pontual
+- Backward compat: CLI `mcp-ms-office-documents` ainda funciona
+- Licença: MIT dual copyright (ForLegalAI + filhocf)

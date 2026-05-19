@@ -20,7 +20,7 @@ def main():
 
     Set MCP_TRANSPORT=streamable-http for HTTP mode.
     """
-    from mcp_office_documents.app import mcp, config
+    from mcp_office_documents.app import config, mcp
 
     transport = os.environ.get("MCP_TRANSPORT", "stdio")
 

@@ -1,24 +1,26 @@
 import io
 import logging
 import re
+
 from docx import Document
 
 from upload_tools import upload_file
+
 from .helpers import (
+    HORIZONTAL_LINE_PATTERN,
+    IMAGE_PATTERN,
+    PAGE_BREAK_PATTERN,
+    add_horizontal_line,
+    add_image_to_doc,
+    add_table_to_doc,
+    add_toc,
+    detect_alignment,
     load_templates,
     parse_inline_formatting,
     parse_table,
-    add_table_to_doc,
-    process_list_items,
-    add_horizontal_line,
-    add_image_to_doc,
-    IMAGE_PATTERN,
-    PAGE_BREAK_PATTERN,
-    HORIZONTAL_LINE_PATTERN,
-    detect_alignment,
     process_alignment_block,
+    process_list_items,
     set_header_footer,
-    add_toc,
 )
 
 logger = logging.getLogger(__name__)

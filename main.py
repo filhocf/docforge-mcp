@@ -1,19 +1,21 @@
+import logging
+from pathlib import Path
+from typing import Annotated, Dict, List, Literal, Optional
+
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
 from pydantic import BaseModel, Field
-from typing import Annotated, List, Dict, Optional, Literal
-from xlsx_tools import markdown_to_excel
+
+from config import get_config
 from docx_tools import markdown_to_word
 from docx_tools.dynamic_docx_tools import register_docx_template_tools_from_yaml
-from pptx_tools import create_presentation
 from email_tools import create_eml
 from email_tools.dynamic_email_tools import register_email_template_tools_from_yaml
-from pathlib import Path
-from config import get_config
-from xml_tools import create_xml_file
 from middleware import ApiKeyAuthMiddleware
+from pptx_tools import create_presentation
+from xlsx_tools import markdown_to_excel
+from xml_tools import create_xml_file
 
-import logging
 mcp = FastMCP("MCP Office Documents")
 
 # Initialize config and logging
@@ -292,9 +294,16 @@ async def create_xml_document(
 
 # === Read Tools ===
 from read_tools import (
-    read_docx, get_docx_info, get_docx_paragraphs, get_docx_tables,
-    read_xlsx, get_xlsx_info, get_xlsx_sheets,
-    read_pptx, get_pptx_info, get_pptx_slides,
+    get_docx_info,
+    get_docx_paragraphs,
+    get_docx_tables,
+    get_pptx_info,
+    get_pptx_slides,
+    get_xlsx_info,
+    get_xlsx_sheets,
+    read_docx,
+    read_pptx,
+    read_xlsx,
 )
 
 
@@ -312,7 +321,7 @@ async def tool_read_document(
         elif path.endswith(".pptx"):
             return read_pptx(file_path)
         else:
-            raise ToolError(f"Unsupported file format. Supported: .docx, .xlsx, .pptx")
+            raise ToolError("Unsupported file format. Supported: .docx, .xlsx, .pptx")
     except ToolError:
         raise
     except Exception as e:
@@ -333,7 +342,7 @@ async def tool_get_document_info(
         elif path.endswith(".pptx"):
             return get_pptx_info(file_path)
         else:
-            raise ToolError(f"Unsupported file format. Supported: .docx, .xlsx, .pptx")
+            raise ToolError("Unsupported file format. Supported: .docx, .xlsx, .pptx")
     except ToolError:
         raise
     except Exception as e:
@@ -458,7 +467,7 @@ async def tool_merge_pptx(
 
 
 # === Advanced PPTX Tools ===
-from pptx_tools.advanced import open_pptx_and_edit, add_shape_to_slide, duplicate_slide, apply_slide_template
+from pptx_tools.advanced import add_shape_to_slide, apply_slide_template, duplicate_slide
 
 
 @mcp.tool(name="apply_pptx_template", description="Replace placeholder text in a PPTX slide", tags=["edit", "pptx", "advanced"])
@@ -537,8 +546,12 @@ async def tool_create_excel_chart(
 
 # === Advanced DOCX Tools ===
 from docx_tools.advanced import (
-    add_image_to_docx, add_header_footer, set_page_margins,
-    add_bullet_list, add_numbered_list, merge_table_cells,
+    add_bullet_list,
+    add_header_footer,
+    add_image_to_docx,
+    add_numbered_list,
+    merge_table_cells,
+    set_page_margins,
 )
 
 
@@ -624,7 +637,7 @@ async def tool_merge_table_cells(
 
 
 # === PDF Tools ===
-from pdf_tools import markdown_to_pdf, docx_to_pdf
+from pdf_tools import docx_to_pdf, markdown_to_pdf
 
 
 @mcp.tool(name="create_pdf_from_markdown", description="Generate a PDF document from Markdown content", tags=["create", "pdf"])
@@ -659,9 +672,16 @@ async def tool_convert_docx_to_pdf(
 
 # === Edit Tools ===
 from edit_tools import (
-    edit_docx_paragraph, delete_docx_paragraph, search_replace_docx, insert_docx_paragraph,
-    edit_xlsx_cell, insert_xlsx_row, delete_xlsx_row,
-    edit_pptx_slide_text, delete_pptx_slide, reorder_pptx_slides,
+    delete_docx_paragraph,
+    delete_pptx_slide,
+    delete_xlsx_row,
+    edit_docx_paragraph,
+    edit_pptx_slide_text,
+    edit_xlsx_cell,
+    insert_docx_paragraph,
+    insert_xlsx_row,
+    reorder_pptx_slides,
+    search_replace_docx,
 )
 
 

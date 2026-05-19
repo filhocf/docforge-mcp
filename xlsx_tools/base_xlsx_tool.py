@@ -1,13 +1,15 @@
 import io
 import logging
 import re
-from typing import List, Dict
+from typing import Dict, List
+
 from openpyxl import Workbook
 
 from upload_tools import upload_file
+
 from .helpers import (
-    parse_table,
     add_table_to_sheet,
+    parse_table,
 )
 
 logger = logging.getLogger(__name__)

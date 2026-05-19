@@ -1,7 +1,6 @@
 """Edit existing DOCX files — modify, delete, search/replace, insert."""
 
 from docx import Document
-from docx.shared import Pt
 
 
 def edit_docx_paragraph(file_path: str, index: int, new_text: str, output_path: str | None = None) -> str:
@@ -78,8 +77,6 @@ def insert_docx_paragraph(file_path: str, index: int, text: str, style: str = "N
     else:
         ref_element = None
 
-    from docx.oxml.ns import qn
-    from copy import deepcopy
 
     new_para = doc.add_paragraph(text, style=style)
     new_element = new_para._element

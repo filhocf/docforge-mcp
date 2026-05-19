@@ -1,13 +1,14 @@
+import html
 import io
+import logging
+from email.header import Header
 from email.mime.text import MIMEText  # fixed module path
 from email.utils import formatdate
-from email.header import Header
-import pystache
-import html
-import logging
 
-from upload_tools import upload_file
+import pystache
+
 from template_utils import find_email_template
+from upload_tools import upload_file
 
 logger = logging.getLogger(__name__)
 

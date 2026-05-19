@@ -29,27 +29,27 @@ templates:
 from __future__ import annotations
 
 import io
-import re
 import logging
+import re
 from pathlib import Path
-from typing import Any, Dict, Optional, Literal
+from typing import Any, Dict, Literal, Optional
 
 import yaml
 from docx import Document as DocxDocument
-from docx.text.paragraph import Paragraph
 from docx.table import Table
-from pydantic import Field, create_model
+from docx.text.paragraph import Paragraph
 from fastmcp import FastMCP
+from fastmcp.exceptions import ToolError
+from pydantic import Field, create_model
 
-from upload_tools import upload_file
 from template_utils import find_file_in_template_dirs
+from upload_tools import upload_file
+
 from .helpers import (
-    parse_inline_formatting,
     contains_block_markdown,
+    parse_inline_formatting,
     process_markdown_block,
 )
-from fastmcp.exceptions import ToolError
-
 
 __all__ = ["register_docx_template_tools_from_yaml"]
 

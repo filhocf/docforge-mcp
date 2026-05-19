@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Optional, Tuple
-import logging
 
 logger = logging.getLogger(__name__)
 

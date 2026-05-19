@@ -21,8 +21,9 @@ import logging
 import os
 from enum import Enum
 from typing import Optional
-from pydantic import BaseModel, Field, ValidationError, model_validator
+
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 # Load .env file if present (local development). Existing env vars are NOT
 # overwritten, so in Docker (where env_file sets them) this is a safe no-op.

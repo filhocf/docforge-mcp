@@ -5,20 +5,26 @@ functions for template loading and data parsing.
 """
 
 import logging
-from typing import List, Tuple, Optional, Any
+from typing import Any, List, Optional, Tuple
 
-from pptx.enum.text import PP_ALIGN
-from pptx.util import Inches
 from pptx.dml.color import RGBColor
+from pptx.enum.text import PP_ALIGN
 from pptx.oxml import parse_xml
+from pptx.util import Inches
 
 from .constants import (
-    BLANK_LAYOUT, CONTENT_LAYOUT,
-    DEFAULT_TITLE_FONT_SIZE, DEFAULT_BODY_FONT_SIZE,
-    MARGIN_LEFT, MARGIN_TOP, TITLE_HEIGHT,
-    TABLE_HEADER_FILL, TABLE_HEADER_TEXT, TABLE_ALT_ROW_FILL,
+    BLANK_LAYOUT,
+    CONTENT_LAYOUT,
+    DEFAULT_BODY_FONT_SIZE,
+    DEFAULT_TITLE_FONT_SIZE,
+    MARGIN_LEFT,
+    MARGIN_TOP,
+    TABLE_ALT_ROW_FILL,
+    TABLE_HEADER_FILL,
+    TABLE_HEADER_TEXT,
+    TITLE_HEIGHT,
 )
-from .image_utils import download_image, ImageDownloadError, ImageValidationError
+from .image_utils import ImageDownloadError, ImageValidationError, download_image
 
 logger = logging.getLogger(__name__)
 

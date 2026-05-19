@@ -4,9 +4,8 @@ This module contains layout indices, typography settings, colors, and margins
 used throughout the PowerPoint generation.
 """
 
-from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
-
+from pptx.util import Inches, Pt
 
 # =============================================================================
 # Slide Layout Indices (PowerPoint default template)

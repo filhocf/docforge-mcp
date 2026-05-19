@@ -23,12 +23,12 @@ sys.path.insert(0, str(project_root))
 
 import pytest
 from docx import Document
-from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Pt
 
 from docx_tools.dynamic_docx_tools import (
-    _replace_placeholders_in_paragraph,
     _replace_placeholders_in_document,
+    _replace_placeholders_in_paragraph,
     find_docx_template_by_name,
 )
 from docx_tools.helpers import contains_block_markdown
@@ -846,7 +846,6 @@ templates:
     def test_find_template_in_custom_dir(self):
         """Test finding templates in custom_templates directory."""
         # This test depends on the actual letter_template.docx existing
-        from docx_tools.dynamic_docx_tools import find_docx_template_by_name
 
         result = find_docx_template_by_name("letter_template.docx")
         # Should find the template we created earlier
@@ -1392,7 +1391,6 @@ class TestIntegration:
 
     def test_full_letter_workflow(self):
         """Test complete workflow of loading template and generating document."""
-        from docx_tools.dynamic_docx_tools import find_docx_template_by_name
 
         # Find the letter template
         template_path = find_docx_template_by_name("letter_template.docx")

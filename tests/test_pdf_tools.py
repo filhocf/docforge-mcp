@@ -1,10 +1,10 @@
 """Tests for pdf_tools — PDF generation and conversion."""
 
-import pytest
 from unittest.mock import patch
+
 from docx import Document
 
-from pdf_tools.base_pdf_tool import markdown_to_pdf, docx_to_pdf, MarkdownPDF
+from pdf_tools.base_pdf_tool import MarkdownPDF, docx_to_pdf, markdown_to_pdf
 
 
 class TestMarkdownPDF:

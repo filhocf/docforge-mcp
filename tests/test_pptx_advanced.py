@@ -1,10 +1,10 @@
 """Tests for advanced PPTX features."""
 
+
 import pytest
 from pptx import Presentation
-from pathlib import Path
 
-from pptx_tools.advanced import open_pptx_and_edit, add_shape_to_slide, duplicate_slide, apply_slide_template
+from pptx_tools.advanced import add_shape_to_slide, apply_slide_template, duplicate_slide, open_pptx_and_edit
 
 
 @pytest.fixture

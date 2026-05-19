@@ -6,15 +6,16 @@ the '## Sheet: Name' heading syntax correctly for multi-sheet workbooks.
 
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+import io
+
 import pytest
 from openpyxl import Workbook, load_workbook
-import io
 
 # We test the internal parsing logic, mocking the upload step.
 from xlsx_tools.base_xlsx_tool import markdown_to_excel

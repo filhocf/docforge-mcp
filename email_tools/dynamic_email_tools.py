@@ -9,19 +9,20 @@ Updated assumptions:
 from __future__ import annotations
 
 import io
-import yaml
-import pystache
 import logging
-from email.mime.text import MIMEText
 from email import encoders
+from email.mime.text import MIMEText
 from pathlib import Path
-from typing import Any, Dict, Optional, Literal
-from pydantic import Field, create_model
-from fastmcp import FastMCP
-from upload_tools import upload_file
-from template_utils import find_email_template
-from fastmcp.exceptions import ToolError
+from typing import Any, Dict, Literal, Optional
 
+import pystache
+import yaml
+from fastmcp import FastMCP
+from fastmcp.exceptions import ToolError
+from pydantic import Field, create_model
+
+from template_utils import find_email_template
+from upload_tools import upload_file
 
 __all__ = ["register_email_template_tools_from_yaml"]
 

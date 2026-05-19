@@ -1,11 +1,11 @@
 """Advanced PPTX features implementation."""
 
-from pptx import Presentation
-from pptx.util import Inches, Pt, Emu
-from pptx.enum.shapes import MSO_SHAPE
-from pptx.dml.color import RGBColor
 from copy import deepcopy
-from lxml import etree
+
+from pptx import Presentation
+from pptx.dml.color import RGBColor
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.util import Inches
 
 
 def open_pptx_and_edit(file_path: str, slide_index: int, placeholder_map: dict[str, str], output_path: str | None = None) -> str:

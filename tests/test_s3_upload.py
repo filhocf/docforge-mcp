@@ -12,17 +12,16 @@ Also verifies validation rules:
 - Empty string env vars normalize to the default credential chain
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -246,6 +245,7 @@ class TestUploadToS3:
     def test_upload_returns_presigned_url(self):
         """Successful upload should return a string with the presigned URL."""
         from io import BytesIO
+
         from upload_tools.backends.s3 import upload_to_s3
 
         env = _build_env(S3_BUCKET="upload-bucket")
@@ -271,8 +271,9 @@ class TestUploadToS3:
 
     def test_upload_returns_none_when_no_config(self):
         """upload_to_s3 should return None when s3cfg is None."""
-        from upload_tools.backends.s3 import upload_to_s3
         from io import BytesIO
+
+        from upload_tools.backends.s3 import upload_to_s3
 
         result = upload_to_s3(BytesIO(b"data"), "file.docx", None, 3600)
         assert result is None
@@ -280,7 +281,9 @@ class TestUploadToS3:
     def test_upload_returns_none_on_no_credentials_error(self):
         """upload_to_s3 should return None and log when credentials are missing."""
         from io import BytesIO
+
         from botocore.exceptions import NoCredentialsError
+
         from upload_tools.backends.s3 import upload_to_s3
 
         env = _build_env(S3_BUCKET="no-creds-bucket")
@@ -297,7 +300,9 @@ class TestUploadToS3:
     def test_upload_returns_none_on_client_error(self):
         """upload_to_s3 should return None on ClientError."""
         from io import BytesIO
+
         from botocore.exceptions import ClientError
+
         from upload_tools.backends.s3 import upload_to_s3
 
         env = _build_env(S3_BUCKET="error-bucket")

@@ -2,8 +2,7 @@
 
 from openpyxl import load_workbook
 from openpyxl.formatting.rule import CellIsRule, ColorScaleRule, DataBarRule
-from openpyxl.styles import PatternFill, Font
-from openpyxl.utils import get_column_letter
+from openpyxl.styles import PatternFill
 
 
 def apply_excel_formatting(file_path: str, sheet_name: str, rules: list[dict], output_path: str | None = None) -> str:

@@ -1,7 +1,8 @@
 import logging
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from upload_tools import upload_file
+
 from .slide_builder import PowerpointPresentation
 
 logger = logging.getLogger(__name__)

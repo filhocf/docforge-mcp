@@ -17,9 +17,9 @@ import secrets
 import time
 from typing import Optional
 
-from fastmcp.server.middleware import Middleware, MiddlewareContext
-from fastmcp.server.dependencies import get_http_headers
 from fastmcp.exceptions import AuthorizationError
+from fastmcp.server.dependencies import get_http_headers
+from fastmcp.server.middleware import Middleware, MiddlewareContext
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,8 @@
-from .local import upload_to_local_folder
-from .s3 import upload_to_s3
-from .gcs import upload_to_gcs
 from .azure import upload_to_azure
+from .gcs import upload_to_gcs
+from .local import upload_to_local_folder
 from .minio import upload_to_minio
+from .s3 import upload_to_s3
 
 __all__ = [
     "upload_to_local_folder",

@@ -6,24 +6,34 @@ from structured data, combining helper mixins for text, tables, images, etc.
 
 import io
 import logging
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from pptx import Presentation
 from pptx.enum.text import PP_ALIGN
 from pptx.util import Inches, Pt
 
 from template_utils import find_pptx_templates
+
+from .chart_utils import ChartDataError, add_chart_to_slide
 from .constants import (
-    TITLE_LAYOUT, SECTION_LAYOUT, CONTENT_LAYOUT,
-    TWO_COLUMN_LAYOUT, TWO_COLUMN_TEXT_LAYOUT,
-    DEFAULT_SUBTITLE_FONT_SIZE, DEFAULT_CAPTION_FONT_SIZE, DEFAULT_QUOTE_FONT_SIZE,
+    CONTENT_LAYOUT,
+    DEFAULT_CAPTION_FONT_SIZE,
+    DEFAULT_QUOTE_FONT_SIZE,
+    DEFAULT_SUBTITLE_FONT_SIZE,
+    SECTION_LAYOUT,
     TABLE_HEADER_FILL,
+    TITLE_LAYOUT,
+    TWO_COLUMN_LAYOUT,
+    TWO_COLUMN_TEXT_LAYOUT,
 )
 from .helpers import (
-    SlideHelperMixin, TextHelperMixin, TableHelperMixin, ImageHelperMixin,
-    parse_table_data, parse_color,
+    ImageHelperMixin,
+    SlideHelperMixin,
+    TableHelperMixin,
+    TextHelperMixin,
+    parse_color,
+    parse_table_data,
 )
-from .chart_utils import add_chart_to_slide, ChartDataError
 
 logger = logging.getLogger(__name__)
 

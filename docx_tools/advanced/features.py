@@ -1,9 +1,7 @@
 """Advanced DOCX features implementation."""
 
 from docx import Document
-from docx.shared import Inches, Cm, Pt
-from docx.enum.section import WD_ORIENT
-from pathlib import Path
+from docx.shared import Cm, Inches
 
 
 def add_image_to_docx(file_path: str, image_path: str, width_inches: float = 4.0, paragraph_index: int | None = None, output_path: str | None = None) -> str:

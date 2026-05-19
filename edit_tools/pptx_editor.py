@@ -1,7 +1,6 @@
 """Edit existing PPTX files — modify slides, delete, reorder."""
 
 from pptx import Presentation
-from copy import deepcopy
 
 
 def edit_pptx_slide_text(file_path: str, slide_index: int, old_text: str, new_text: str, output_path: str | None = None) -> str:

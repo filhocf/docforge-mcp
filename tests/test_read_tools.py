@@ -1,17 +1,21 @@
 """Tests for read_tools — reading existing DOCX, XLSX, PPTX files."""
 
-import os
-import tempfile
 import pytest
 from docx import Document
 from openpyxl import Workbook
 from pptx import Presentation
-from pptx.util import Inches
 
 from read_tools import (
-    read_docx, get_docx_info, get_docx_paragraphs, get_docx_tables,
-    read_xlsx, get_xlsx_info, get_xlsx_sheets,
-    read_pptx, get_pptx_info, get_pptx_slides,
+    get_docx_info,
+    get_docx_paragraphs,
+    get_docx_tables,
+    get_pptx_info,
+    get_pptx_slides,
+    get_xlsx_info,
+    get_xlsx_sheets,
+    read_docx,
+    read_pptx,
+    read_xlsx,
 )
 
 

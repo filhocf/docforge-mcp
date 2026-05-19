@@ -25,6 +25,7 @@ See Also:
 """
 
 import logging
+
 from ..utils import get_content_type
 
 logger = logging.getLogger(__name__)
@@ -91,7 +92,7 @@ def upload_to_s3(file_object, file_name: str, s3cfg, signed_url_expires_in: int)
 
     # Lazy import to avoid requiring boto3/botocore unless S3 strategy is used
     try:
-        from botocore.exceptions import NoCredentialsError, ClientError  # type: ignore
+        from botocore.exceptions import ClientError, NoCredentialsError  # type: ignore
     except Exception:
         logger.error("boto3/botocore are not installed. Please add them to requirements and install.")
         return None

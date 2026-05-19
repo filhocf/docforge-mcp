@@ -1,6 +1,7 @@
 """Read and extract content from existing PPTX files."""
 
 from pathlib import Path
+
 from pptx import Presentation
 
 

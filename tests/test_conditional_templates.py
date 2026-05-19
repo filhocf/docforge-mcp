@@ -1,10 +1,9 @@
 """Tests for conditional templates (DOCX + PPTX)."""
 
-import pytest
 from docx import Document
 from pptx import Presentation
 
-from docx_tools.conditional_templates import render_docx_template, render_pptx_template, _render_text
+from docx_tools.conditional_templates import _render_text, render_docx_template, render_pptx_template
 
 
 class TestRenderText:

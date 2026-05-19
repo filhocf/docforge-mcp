@@ -1,11 +1,12 @@
 import logging
 import re
 
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.opc.constants import RELATIONSHIP_TYPE
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from docx.opc.constants import RELATIONSHIP_TYPE
 from docx.shared import Inches
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+
 from template_utils import find_docx_template
 
 logger = logging.getLogger(__name__)

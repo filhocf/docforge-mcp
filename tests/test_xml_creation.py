@@ -5,10 +5,10 @@ including valid XML, invalid XML, auto-declaration behavior, encoding handling,
 and security protection against malicious XML content.
 """
 
+import io
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-import io
+from unittest.mock import patch
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent
@@ -17,10 +17,10 @@ sys.path.insert(0, str(project_root))
 import pytest
 
 from xml_tools.base_xml_tool import (
-    validate_xml,
-    create_xml_file,
-    XMLValidationError,
     XMLFileCreationError,
+    XMLValidationError,
+    create_xml_file,
+    validate_xml,
 )
 
 

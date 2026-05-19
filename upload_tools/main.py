@@ -1,11 +1,13 @@
 import logging
+
 from config import get_config
-from .utils import generate_unique_object_name, generate_named_object_name
-from .backends.local import upload_to_local_folder
-from .backends.s3 import upload_to_s3
-from .backends.gcs import upload_to_gcs
+
 from .backends.azure import upload_to_azure
+from .backends.gcs import upload_to_gcs
+from .backends.local import upload_to_local_folder
 from .backends.minio import upload_to_minio
+from .backends.s3 import upload_to_s3
+from .utils import generate_named_object_name, generate_unique_object_name
 
 logger = logging.getLogger(__name__)
 

@@ -4,7 +4,6 @@ These tests create actual .pptx files and save them to disk for manual inspectio
 Output files are saved to tests/output/pptx/ directory.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -13,6 +12,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 import pytest
+
 from pptx_tools.slide_builder import PowerpointPresentation
 
 # Output directory for test files
@@ -873,16 +873,16 @@ class TestCompletePresentation:
         print(f"\n✅ Complete presentation saved to: {path}")
         print(f"   File size: {path.stat().st_size / 1024:.1f} KB")
         print(f"   Total slides: {len(slides)}")
-        print(f"\n   Slide types demonstrated:")
-        print(f"   - title (Layout 0)")
-        print(f"   - section (Layout 2)")
-        print(f"   - content (Layout 1)")
-        print(f"   - table (Layout 1)")
-        print(f"   - chart - column, pie, line (Layout 1)")
-        print(f"   - two_column without subheaders (Layout 3)")
-        print(f"   - two_column with subheaders (Layout 4)")
-        print(f"   - image (Layout 1)")
-        print(f"   - quote (Layout 1)")
+        print("\n   Slide types demonstrated:")
+        print("   - title (Layout 0)")
+        print("   - section (Layout 2)")
+        print("   - content (Layout 1)")
+        print("   - table (Layout 1)")
+        print("   - chart - column, pie, line (Layout 1)")
+        print("   - two_column without subheaders (Layout 3)")
+        print("   - two_column with subheaders (Layout 4)")
+        print("   - image (Layout 1)")
+        print("   - quote (Layout 1)")
 
 
 class TestEdgeCases:

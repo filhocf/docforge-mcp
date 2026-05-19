@@ -1,7 +1,8 @@
-import re
 import logging
-from typing import List, Tuple, Dict, Optional
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+import re
+from typing import Dict, List, Optional, Tuple
+
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 logger = logging.getLogger(__name__)

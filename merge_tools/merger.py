@@ -1,8 +1,9 @@
 """Merge multiple documents into one."""
 
+from copy import deepcopy
+
 from docx import Document
 from pptx import Presentation
-from copy import deepcopy
 
 
 def merge_docx(file_paths: list[str], output_path: str) -> str:

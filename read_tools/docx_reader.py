@@ -1,6 +1,7 @@
 """Read and extract content from existing DOCX files."""
 
 from pathlib import Path
+
 from docx import Document
 
 
