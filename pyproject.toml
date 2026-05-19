@@ -58,9 +58,9 @@ docforge-mcp = "mcp_office_documents.server:main"
 mcp-ms-office-documents = "mcp_office_documents.server:main"  # backward compat
 
 [project.urls]
-Homepage = "https://github.com/ForLegalAI/mcp-ms-office-documents"
-Repository = "https://github.com/filhocf/mcp-ms-office-documents"
-Issues = "https://github.com/filhocf/mcp-ms-office-documents/issues"
+Homepage = "https://github.com/filhocf/docforge-mcp"
+Repository = "https://github.com/filhocf/docforge-mcp"
+Issues = "https://github.com/filhocf/docforge-mcp/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["mcp_office_documents", "docx_tools", "xlsx_tools", "pptx_tools", "email_tools", "xml_tools", "upload_tools", "read_tools", "edit_tools", "pdf_tools", "merge_tools"]
