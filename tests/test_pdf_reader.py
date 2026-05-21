@@ -64,17 +64,12 @@ class TestGetPdfInfo:
         info = get_pdf_info(sample_pdf)
         assert info["file"] == "test.pdf"
 
-    def test_returns_character_count(self, sample_pdf):
-        info = get_pdf_info(sample_pdf)
-        assert info["characters"] > 0
-
     def test_has_expected_keys(self, sample_pdf):
         info = get_pdf_info(sample_pdf)
         assert "file" in info
         assert "title" in info
         assert "author" in info
         assert "pages" in info
-        assert "characters" in info
 
 
 class TestGetPdfPages:

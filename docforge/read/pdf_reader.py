@@ -5,9 +5,20 @@ from pathlib import Path
 from pypdf import PdfReader
 
 
+def _get_reader(file_path: str) -> PdfReader:
+    """Create a PdfReader, handling encrypted PDFs with empty password."""
+    reader = PdfReader(file_path)
+    if reader.is_encrypted:
+        try:
+            reader.decrypt("")
+        except Exception:
+            pass  # If decrypt fails, extraction will fail gracefully per-page
+    return reader
+
+
 def read_pdf(file_path: str) -> str:
     """Extract all text from a PDF file."""
-    reader = PdfReader(file_path)
+    reader = _get_reader(file_path)
     pages = []
     for page in reader.pages:
         text = page.extract_text()
@@ -17,11 +28,9 @@ def read_pdf(file_path: str) -> str:
 
 
 def get_pdf_info(file_path: str) -> dict:
-    """Get metadata and statistics from a PDF file."""
-    reader = PdfReader(file_path)
+    """Get metadata and statistics from a PDF file (lightweight — no full text extraction)."""
+    reader = _get_reader(file_path)
     meta = reader.metadata or {}
-
-    total_chars = sum(len(p.extract_text() or "") for p in reader.pages)
 
     return {
         "file": Path(file_path).name,
@@ -29,13 +38,12 @@ def get_pdf_info(file_path: str) -> dict:
         "author": meta.get("/Author", "") or "",
         "creator": meta.get("/Creator", "") or "",
         "pages": len(reader.pages),
-        "characters": total_chars,
     }
 
 
 def get_pdf_pages(file_path: str, page_numbers: list[int] | None = None) -> list[dict]:
     """Extract text from specific pages (0-indexed). If page_numbers is None, returns all."""
-    reader = PdfReader(file_path)
+    reader = _get_reader(file_path)
     result = []
 
     indices = page_numbers if page_numbers is not None else range(len(reader.pages))
