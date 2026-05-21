@@ -323,12 +323,11 @@ from docforge.read import (
     read_pptx,
     read_xlsx,
 )
-from docforge.read.pdf_reader import get_pdf_info, get_pdf_pages, read_pdf
 
 
-@mcp.tool(name="read_document", description="Extract all text from an existing document (DOCX, XLSX, PPTX, or PDF)", tags=["read"])
+@mcp.tool(name="read_document", description="Extract all text from an existing document (DOCX, XLSX, or PPTX)", tags=["read"])
 async def tool_read_document(
-    file_path: Annotated[str, Field(description="Absolute path to the document file (.docx, .xlsx, .pptx, or .pdf)")],
+    file_path: Annotated[str, Field(description="Absolute path to the document file (.docx, .xlsx, or .pptx)")],
 ) -> str:
     """Read and extract text from an existing Office document."""
     path = file_path.lower()
@@ -339,10 +338,8 @@ async def tool_read_document(
             return read_xlsx(file_path)
         elif path.endswith(".pptx"):
             return read_pptx(file_path)
-        elif path.endswith(".pdf"):
-            return read_pdf(file_path)
         else:
-            raise ToolError("Unsupported file format. Supported: .docx, .xlsx, .pptx, .pdf")
+            raise ToolError("Unsupported file format. Supported: .docx, .xlsx, .pptx")
     except ToolError:
         raise
     except Exception as e:
@@ -351,7 +348,7 @@ async def tool_read_document(
 
 @mcp.tool(name="get_document_info", description="Get metadata and statistics from an existing document", tags=["read"])
 async def tool_get_document_info(
-    file_path: Annotated[str, Field(description="Absolute path to the document file (.docx, .xlsx, .pptx, or .pdf)")],
+    file_path: Annotated[str, Field(description="Absolute path to the document file (.docx, .xlsx, or .pptx)")],
 ) -> dict:
     """Get document metadata: author, dates, page/slide/sheet count, etc."""
     path = file_path.lower()
@@ -362,10 +359,8 @@ async def tool_get_document_info(
             return get_xlsx_info(file_path)
         elif path.endswith(".pptx"):
             return get_pptx_info(file_path)
-        elif path.endswith(".pdf"):
-            return get_pdf_info(file_path)
         else:
-            raise ToolError("Unsupported file format. Supported: .docx, .xlsx, .pptx, .pdf")
+            raise ToolError("Unsupported file format. Supported: .docx, .xlsx, .pptx")
     except ToolError:
         raise
     except Exception as e:
@@ -416,18 +411,6 @@ async def tool_get_pptx_slides(
         return get_pptx_slides(file_path)
     except Exception as e:
         raise ToolError(f"Error reading slides: {e}")
-
-
-@mcp.tool(name="get_pdf_pages", description="Extract text from specific pages of a PDF file", tags=["read", "pdf"])
-async def tool_get_pdf_pages(
-    file_path: Annotated[str, Field(description="Absolute path to the .pdf file")],
-    page_numbers: Annotated[list[int] | None, Field(description="0-indexed page numbers to extract. None for all pages.")] = None,
-) -> list[dict]:
-    """Get text content from specific PDF pages."""
-    try:
-        return get_pdf_pages(file_path, page_numbers=page_numbers)
-    except Exception as e:
-        raise ToolError(f"Error reading PDF pages: {e}")
 
 
 # === XLSX Formatting Tools ===
