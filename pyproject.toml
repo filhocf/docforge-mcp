@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "docforge-mcp"
 version = "0.2.0"
 description = "MCP server for complete Office document manipulation — create, read, edit, convert DOCX/XLSX/PPTX/PDF/EML"
-readme = "Readme.md"
+readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
