@@ -29,6 +29,11 @@ jobs:
       - name: Run ruff linter
         run: ruff check .
 
+      - name: Security check (bandit)
+        run: |
+          pip install bandit
+          bandit -r docforge/ -ll -ii --skip B104
+
       - name: Run tests with coverage
         run: pytest --tb=short -q --ignore=tests/test_s3_upload.py
 
