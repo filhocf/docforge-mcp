@@ -215,14 +215,17 @@ class TestOnRequest:
 
         assert mw._failed_attempts == 0
 
-        with patch("docforge.middleware.get_http_headers", return_value={"x-api-key": "wrong"}):
+        # Mock monotonic to return a value well above the throttle interval
+        # so the warning fires regardless of system uptime.
+        with patch("docforge.middleware.get_http_headers", return_value={"x-api-key": "wrong"}), \
+             patch("docforge.middleware.time.monotonic", return_value=100.0):
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
         # First failure triggers a WARNING which resets counter to 0
         # so after one reject the counter is 0 (just emitted warning)
         assert mw._failed_attempts == 0
-        assert mw._last_warn_time > 0
+        assert mw._last_warn_time == 100.0
 
     async def test_throttled_warning_not_emitted_within_interval(self):
         """WARNING should NOT fire again within the throttle window."""
@@ -230,12 +233,13 @@ class TestOnRequest:
         call_next = AsyncMock()
         context = _make_context()
 
-        # Simulate that a warning was just emitted
-        import time as _time
+        # Simulate that a warning was just emitted at t=100
+        mw._last_warn_time = 100.0
 
-        mw._last_warn_time = _time.monotonic()
-
-        with patch("docforge.middleware.get_http_headers", return_value={}), patch("docforge.middleware.logger") as mock_logger:
+        # Now is t=110 — within the 60s throttle window
+        with patch("docforge.middleware.get_http_headers", return_value={}), \
+             patch("docforge.middleware.time.monotonic", return_value=110.0), \
+             patch("docforge.middleware.logger") as mock_logger:
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
@@ -252,11 +256,14 @@ class TestOnRequest:
         call_next = AsyncMock()
         context = _make_context()
 
-        # Pretend the last warning was long ago
+        # Pretend the last warning was at t=0
         mw._last_warn_time = 0.0
         mw._failed_attempts = 5  # accumulated silently
 
-        with patch("docforge.middleware.get_http_headers", return_value={}), patch("docforge.middleware.logger") as mock_logger:
+        # Now is t=100 — well past the 60s throttle window
+        with patch("docforge.middleware.get_http_headers", return_value={}), \
+             patch("docforge.middleware.time.monotonic", return_value=100.0), \
+             patch("docforge.middleware.logger") as mock_logger:
             with pytest.raises(AuthorizationError):
                 await mw.on_request(context, call_next)
 
